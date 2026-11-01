@@ -1,0 +1,170 @@
+---
+// Una pantalla de SIG Advanced, reproducida con su propio estilo (tema de SIGNET_ADVANCED).
+// Se dibuja a 1280 px de diseño en unidades em y escala con el ancho de su contenedor.
+import { menuSig, type Pantalla } from '../config/screens';
+
+interface Props {
+  p: Pantalla;
+  class?: string;
+  lazy?: boolean;
+}
+
+const { p, class: extra, lazy = true } = Astro.props;
+---
+
+<div class:list={['sig-frame', extra]} data-ui>
+  <div class="sig" role="img" aria-label={`Pantalla de SIG Advanced: ${p.modulo}, ${p.titulo}`}>
+    <div class="sig-top">
+      <span class="sig-brand">
+        <img src="/logo-sig.png" alt="" width="48" height="37" loading={lazy ? 'lazy' : 'eager'} />
+        <span>SIG <b>ERP</b> Advanced</span>
+      </span>
+      <span class="sig-company">Demo Andina S.A.C.</span>
+      <span class="sig-search">Buscar…</span>
+      <span class="sig-user"><span class="sig-avatar">CS</span><span><b>CONSULTOR SIG</b><small>ADMIN</small></span></span>
+    </div>
+    <div class="sig-nav">
+      {menuSig.map((m) => <span class:list={['sig-nav-item', { 'is-active': m === p.modulo }]}>{m}</span>)}
+    </div>
+    <div class="sig-body">
+      <p class="sig-crumb">Inicio / {p.modulo} / <span>{p.titulo}</span></p>
+      <div class="sig-card">
+        <div class="sig-card-head">
+          <span class="sig-title">{p.titulo}</span>
+          <span class="sig-add">+ Agregar</span>
+        </div>
+        <div class="sig-filters">
+          {p.filtros.map((f) => (
+            <span class="sig-field"><small>{f.label}</small><span>{f.valor ?? ''}</span></span>
+          ))}
+        </div>
+        <table class="sig-table">
+          <thead>
+            <tr>
+              {p.columnas.map((c) => <th class:list={{ num: c.num }}>{c.t}</th>)}
+              <th class="act">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {p.filas.map((fila) => (
+              <tr>
+                {fila.map((celda, i) => (
+                  <td class:list={{ num: p.columnas[i]?.num, tot: p.columnas[i]?.total }}>
+                    {typeof celda === 'string' ? celda : <span class={`sig-chip sig-chip-${celda.c}`}>{celda.t}</span>}
+                  </td>
+                ))}
+                <td class="act">
+                  <svg viewBox="0 0 24 24" class="i-edit"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25Zm17.7-10.2a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg>
+                  <svg viewBox="0 0 24 24" class="i-del"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12ZM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4Z"/></svg>
+                  <svg viewBox="0 0 24 24" class="i-print"><path d="M19 8H5a3 3 0 0 0-3 3v6h4v4h12v-4h4v-6a3 3 0 0 0-3-3Zm-3 11H8v-5h8v5Zm1-16H7v4h10V3Z"/></svg>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .sig-frame {
+    container-type: inline-size;
+    width: 100%;
+  }
+  .sig {
+    --adv-primary: #004080;
+    --adv-primary-dark: #002f5f;
+    --adv-primary-light: #e9f0f8;
+    --adv-accent: #f9a216;
+    --adv-bg: #f5f7fa;
+    --adv-border: #e2e8f0;
+    --adv-text: #1a2332;
+    --adv-text-sec: #4a5568;
+    font-size: calc(100cqw / 80);
+    font-family: Roboto, 'Segoe UI', system-ui, sans-serif; /* taste-skill-ignore: tipografía de SIG */
+    font-stretch: 100%;
+    width: 80em;
+    aspect-ratio: 16 / 10;
+    background: var(--adv-bg);
+    color: var(--adv-text);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    letter-spacing: 0;
+    user-select: none;
+  }
+  .sig-top {
+    height: 4.4em;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 1.6em;
+    padding: 0 1.4em;
+    background: #eef2f8;
+  }
+  .sig-brand { display: flex; align-items: center; gap: 0.6em; font-size: 1.5em; font-weight: 700; color: var(--adv-primary-dark); margin-right: auto; }
+  .sig-brand img { width: 1.9em; height: auto; }
+  .sig-brand b { color: var(--adv-accent); font-weight: 700; }
+  .sig-company { font-size: 0.95em; font-weight: 700; color: var(--adv-primary-dark); background: #e3ebf6; padding: 0.5em 0.9em; border-radius: 0.5em; }
+  .sig-search { width: 20em; height: 2.7em; border: 0.07em solid #c5ccd6; border-radius: 0.35em; background: #fff; display: flex; align-items: center; padding: 0 1em; color: #8a94a6; }
+  .sig-user { display: flex; align-items: center; gap: 0.6em; font-size: 0.85em; }
+  .sig-user b { display: block; font-size: 1.05em; }
+  .sig-user small { color: var(--adv-text-sec); font-size: 0.85em; }
+  .sig-avatar { width: 2.6em; height: 2.6em; border-radius: 50%; background: var(--adv-primary-dark); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 1.05em; }
+
+  .sig-nav {
+    flex: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.9em;
+    padding: 0.9em 1.4em;
+    background: var(--adv-primary);
+    color: #fff;
+    font-size: 0.95em;
+    font-weight: 500;
+  }
+  .sig-nav-item { padding: 0.25em 0; position: relative; white-space: nowrap; }
+  .sig-nav-item::after { content: ' ▾'; font-size: 0.7em; opacity: 0.8; }
+  .sig-nav-item:first-child::after { content: ''; }
+  .sig-nav-item.is-active { box-shadow: inset 0 -0.18em 0 var(--adv-accent); font-weight: 700; /* taste-skill-ignore: estilo de SIG */ }
+
+  .sig-body { flex: 1; padding: 1em 1.4em 0; min-height: 0; }
+  .sig-crumb { font-size: 0.95em; color: var(--adv-text); margin-bottom: 0.9em; }
+  .sig-crumb span { color: #8a94a6; }
+  .sig-card { background: #fff; border-radius: 1em; padding: 1.4em 1.4em 0; height: 100%; box-shadow: 0 0.1em 0.4em rgb(16 24 40 / 0.06); /* taste-skill-ignore: estilo de SIG */ }
+  .sig-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.3em; }
+  .sig-title { font-size: 1.15em; font-weight: 700; padding-left: 0.4em; }
+  .sig-add { background: var(--adv-primary); color: #fff; font-weight: 700; padding: 0.75em 1.6em; border-radius: 0.45em; font-size: 0.95em; }
+  .sig-filters { display: flex; gap: 0.7em; margin-bottom: 1.2em; }
+  .sig-field { flex: 1; max-width: 16em; height: 2.75em; border: 0.07em solid #b9c2cf; border-radius: 0.3em; position: relative; display: flex; align-items: center; padding: 0 1em; font-size: 0.95em; }
+  .sig-field small { position: absolute; top: -0.65em; left: 0.8em; background: #fff; padding: 0 0.3em; font-size: 0.72em; color: var(--adv-text-sec); }
+  .sig-field:not(:has(span:not(:empty))) small { position: static; font-size: 1em; padding: 0; color: #6b7588; }
+
+  .sig-table { width: 100%; border-collapse: collapse; font-size: 0.92em; }
+  .sig-table th {
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: var(--adv-text-sec);
+    padding: 1em 0.9em;
+    border-bottom: 0.18em solid var(--adv-primary-dark);
+    letter-spacing: 0.02em;
+  }
+  .sig-table td { padding: 0.95em 0.9em; border-bottom: 0.07em solid var(--adv-border); white-space: nowrap; }
+  .sig-table tbody tr:nth-child(2) td { background: #f3f7fc; }
+  .sig-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .sig-table td.tot { background: #e2eefb; font-weight: 600; }
+  .sig-table tbody tr:nth-child(2) td.tot { background: #d6e6f8; }
+  .sig-table .act { text-align: center; width: 8.5em; white-space: nowrap; }
+  .sig-table td.act svg { width: 1.35em; height: 1.35em; margin: 0 0.3em; vertical-align: middle; }
+  .i-edit { fill: #16a34a; }
+  .i-del, .i-print { fill: #dc2626; }
+  .sig-chip { display: inline-block; padding: 0.25em 0.75em; border-radius: 1em; font-size: 0.85em; font-weight: 700; }
+  .sig-chip-ok { background: #dcf3e5; color: #116a37; }
+  .sig-chip-warn { background: #fef3e2; color: #9a5b00; }
+  .sig-chip-info { background: #e8f1fe; color: #1d4ed8; }
+  .sig-chip-off { background: #edf0f4; color: #4a5568; }
+</style>

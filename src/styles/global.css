@@ -3,16 +3,18 @@
 
 /* Colores de marca tomados de sigerp.pe. Cada capítulo de la página es uno de estos campos. */
 @theme {
-  --color-navy: #0f4d97;
-  --color-orange: #f8a116;
-  --color-indigo: #221f7b;
-  --color-electric: #3c53f4;
-  --color-mist: #efeff4;
-  --color-paper: #f8f8fb;
-  --color-ink: #0a1030;
-  --color-navy-deep: #0b3b75;
-  --color-indigo-up: #2d2a92;
-  --color-mist-down: #e2e2ea;
+  /* Paleta del propio SIG Advanced (SIGNET_ADVANCED/wwwroot/Css/theme.css), más sobria. */
+  --color-navy: #002f5f;
+  --color-navy-deep: #001f40;
+  --color-indigo: #004080;
+  --color-indigo-up: #0b4c91;
+  --color-electric: #1d5fa8;
+  --color-orange: #f9a216;
+  --color-sky: #e9f0f8;
+  --color-mist: #f5f7fa;
+  --color-mist-down: #e2e8f0;
+  --color-paper: #ffffff;
+  --color-ink: #1a2332;
 
   --font-sans: "Archivo Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
@@ -106,7 +108,7 @@ body {
   transition: transform 160ms var(--ease-out-quint), background-color 200ms ease;
   will-change: transform;
 }
-.btn:hover { background: var(--btn-bg-hover, #ffb23a); }
+.btn:hover { background: var(--btn-bg-hover, #ffb43f); }
 .btn:active { transform: scale(0.97); }
 .btn svg { transition: transform 200ms var(--ease-out-quint); }
 .btn:hover svg { transform: translateX(4px); }

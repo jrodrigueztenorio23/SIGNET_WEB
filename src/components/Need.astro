@@ -5,7 +5,7 @@ const inicial = modulos[0];
 const datos = modulos.map(({ id, nombre, opciones, resumen, pantallas, claves }) => ({ id, nombre, opciones, resumen, pantallas, claves }));
 ---
 
-<section id="necesidad" class="chapter bg-orange text-ink" data-ink="#0a1030" aria-labelledby="necesidad-title">
+<section id="necesidad" class="chapter bg-indigo text-paper" data-ink="#ffffff" aria-labelledby="necesidad-title">
   <div class="wrap flex min-h-[90svh] flex-col pt-28 pb-14 md:pt-36">
     <h2 id="necesidad-title" class="title max-w-[24ch]" data-reveal>¿Qué necesita resolver tu empresa?</h2>
 
@@ -33,6 +33,7 @@ const datos = modulos.map(({ id, nombre, opciones, resumen, pantallas, claves })
           Consultar por {inicial.nombre}
           <svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 9h13M10 4l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
         </a>
+        <button type="button" id="need-see" class="answer-see link-underline" data-module={inicial.id}>Ver la pantalla</button>
       </div>
 
       <div class="md:col-span-5 md:col-start-8 lg:col-start-8 self-end" data-reveal>
@@ -55,14 +56,14 @@ const datos = modulos.map(({ id, nombre, opciones, resumen, pantallas, claves })
     width: 100%;
     background: transparent;
     border: 0;
-    color: var(--color-ink);
-    caret-color: var(--color-ink);
+    color: var(--color-paper);
+    caret-color: var(--color-orange);
     caret-shape: block;
     padding: 0;
     text-overflow: ellipsis;
   }
   .need-input:focus { outline: none; }
-  .need-line:focus-within { outline: 4px solid var(--color-ink); outline-offset: 8px; }
+  .need-line:focus-within { outline: 3px solid var(--color-orange); outline-offset: 8px; }
 
   .answer {
     background: var(--color-paper);
@@ -102,12 +103,14 @@ const datos = modulos.map(({ id, nombre, opciones, resumen, pantallas, claves })
     transition: background-color 200ms ease, transform 160ms var(--ease-out-quint);
   }
   .answer-cta:hover { background: var(--color-navy-deep); }
+  .answer-see { margin-left: 1.25rem; font-weight: 700; color: var(--color-indigo); min-height: 2.75rem; }
+  .answer-see[hidden] { display: none; }
   .answer-cta:active { transform: scale(0.97); }
 
   .example {
     min-height: 2.75rem;
     padding: 0 1rem;
-    background: var(--color-ink);
+    background: var(--color-indigo-up);
     color: var(--color-paper);
     font-size: 1rem;
     font-weight: 600;
@@ -132,6 +135,15 @@ const datos = modulos.map(({ id, nombre, opciones, resumen, pantallas, claves })
   const summaryEl = document.getElementById('need-summary')!;
   const rowsEl = document.getElementById('need-rows')!;
   const cta = document.getElementById('need-cta') as HTMLAnchorElement;
+  const see = document.getElementById('need-see') as HTMLButtonElement;
+  const conPantalla = new Set(['comercial', 'almacen', 'compras', 'bancos', 'contabilidad', 'planillas', 'produccion', 'activos', 'crm']);
+  see.addEventListener('click', () => {
+    // En escritorio el recorrido fijado lleva el scroll al módulo; en pantallas chicas bajamos a la sección.
+    if (innerWidth < 1024 || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.getElementById('pantallas')?.scrollIntoView();
+    }
+    document.dispatchEvent(new CustomEvent('tour:module', { detail: see.dataset.module }));
+  });
 
   const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
@@ -155,6 +167,8 @@ const datos = modulos.map(({ id, nombre, opciones, resumen, pantallas, claves })
       rowsEl.innerHTML = m.pantallas.map((p) => `<li>${p}</li>`).join('');
       cta.href = wa(`Hola, necesito ${texto} y quiero saber más del módulo ${m.nombre} de SIG Advanced.`);
       cta.firstChild!.textContent = `Consultar por ${m.nombre} `;
+      see.dataset.module = m.id;
+      see.hidden = !conPantalla.has(m.id);
     } else {
       nameEl.textContent = 'Te lo decimos por WhatsApp';
       summaryEl.textContent = texto
@@ -163,6 +177,7 @@ const datos = modulos.map(({ id, nombre, opciones, resumen, pantallas, claves })
       rowsEl.innerHTML = '';
       cta.href = wa(texto ? `Hola, necesito ${texto}. ¿SIG Advanced lo resuelve?` : 'Hola, tengo una consulta sobre SIG Advanced.');
       cta.firstChild!.textContent = 'Escríbenos ';
+      see.hidden = true;
     }
   }
 

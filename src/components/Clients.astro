@@ -2,10 +2,10 @@
 import { clientes } from '../config/site';
 ---
 
-<section id="clientes" class="chapter bg-mist text-ink flex items-center" data-ink="#0a1030" aria-labelledby="clientes-title">
+<section id="clientes" class="chapter bg-mist text-ink flex items-center" data-ink="#1a2332" aria-labelledby="clientes-title">
   <div class="wrap w-full py-28">
     <ul class="proof">
-      <li class="proof-head bg-orange">
+      <li class="proof-head bg-navy text-paper">
         <h2 id="clientes-title" class="proof-title">Empresas que ya trabajan con SIG</h2>
       </li>
       {clientes.map((c) => (
@@ -32,6 +32,7 @@ import { clientes } from '../config/site';
   .proof-tile {
     aspect-ratio: 3 / 2;
     background: var(--color-paper);
+    color: var(--color-navy);
     padding: 24px;
   }
   .proof-tile span {

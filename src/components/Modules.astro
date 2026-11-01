@@ -2,9 +2,9 @@
 // Tablero de módulos: cada mosaico es un primer plano de una pieza real de la interfaz de SIG Advanced.
 ---
 
-<section id="modulos" class="chapter bg-indigo text-paper" data-ink="#f8f8fb" aria-labelledby="modulos-title">
+<section id="modulos" class="chapter bg-navy-deep text-paper" data-ink="#ffffff" aria-labelledby="modulos-title">
   <div class="board pt-24 pb-2.5 md:pt-28">
-    <div class="tile t-head bg-indigo-up" data-tile>
+    <div class="tile t-head bg-navy" data-tile>
       <h2 id="modulos-title" class="headline-tile">12 módulos, un solo sistema</h2>
       <p class="caption-text max-w-[34ch]">Cada área trabaja sobre los mismos datos: lo que vende Comercial ya está en Almacén y en Contabilidad.</p>
     </div>
@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <div class="tile t-sunat bg-orange text-ink" data-tile>
+    <div class="tile t-sunat bg-paper text-ink" data-tile>
       <div class="ui ui-sunat" data-ui aria-hidden="true">
         <span class="sunat-doc tabular">F001-00004812</span>
         <span class="sunat-chip">Aceptada por SUNAT</span>
@@ -76,7 +76,7 @@
       </div>
     </div>
 
-    <div class="tile t-planilla bg-orange text-ink" data-tile>
+    <div class="tile t-planilla bg-sky text-ink" data-tile>
       <div class="ui ui-status" data-ui aria-hidden="true">
         <span class="st-period">Planilla octubre</span>
         <span class="st-chip">Calculada</span>
@@ -89,7 +89,7 @@
 
     <div class="tile t-crm bg-electric text-paper" data-tile>
       <div class="ui ui-avatars" data-ui aria-hidden="true">
-        <span class="av" style="--c:#f8a116">MR</span><span class="av" style="--c:#f8f8fb">LQ</span><span class="av" style="--c:#0a1030;color:#f8f8fb">JT</span>
+        <span class="av" style="--c:#f9a216">MR</span><span class="av" style="--c:#ffffff">LQ</span><span class="av" style="--c:#002f5f;color:#ffffff">JT</span>
       </div>
       <div class="caption">
         <h3>CRM</h3>
@@ -194,8 +194,8 @@
     display: flex; flex-direction: column; align-items: flex-start; gap: 0.4em;
   }
   .sunat-doc { font-size: 3.2em; letter-spacing: -0.03em; line-height: 1; white-space: nowrap; }
-  .sunat-chip { font-size: 1.3em; background: var(--color-ink); color: #62e08a; padding: 0.25em 0.6em; }
-  .sunat-total { font-size: 4.6em; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; margin-top: 0.15em; }
+  .sunat-chip { font-size: 1.3em; background: #dcf3e5; color: #116a37; padding: 0.25em 0.6em; }
+  .sunat-total { color: var(--color-indigo); font-size: 4.6em; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; margin-top: 0.15em; }
 
   /* Kardex */
   .ui-kardex { top: 24px; left: 20px; display: flex; flex-direction: column; font-size: clamp(0.9rem, 1.2vw, 1.1rem); }

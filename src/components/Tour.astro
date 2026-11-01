@@ -1,0 +1,147 @@
+---
+import { pantallas } from '../config/screens';
+import SigScreen from './SigScreen.astro';
+---
+
+<section id="pantallas" class="chapter tour bg-sky text-ink" data-ink="#1a2332" aria-labelledby="tour-title">
+  <div class="tour-pin wrap">
+    <div class="tour-side">
+      <h2 id="tour-title" class="title text-navy" data-reveal>Así se ve SIG Advanced</h2>
+      <div class="tour-tabs" role="tablist" aria-label="Módulos" data-reveal>
+        {pantallas.map((p, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`tab-${p.id}`}
+            aria-controls={`panel-${p.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            class="tour-tab"
+            data-index={i}
+          >{p.modulo}</button>
+        ))}
+      </div>
+      <p class="tour-phrase" id="tour-phrase" aria-live="polite">{pantallas[0].frase}</p>
+    </div>
+
+    <div class="tour-screens" data-reveal>
+      {pantallas.map((p, i) => (
+        <div
+          class:list={['tour-panel', { 'is-active': i === 0 }]}
+          role="tabpanel"
+          id={`panel-${p.id}`}
+          aria-labelledby={`tab-${p.id}`}
+          data-phrase={p.frase}
+        >
+          <SigScreen p={p} />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .tour-pin {
+    min-height: 100svh;
+    display: grid;
+    grid-template-columns: minmax(16rem, 4fr) 8fr;
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: center;
+    padding-block: 6.5rem 3rem;
+  }
+  .tour-tabs { margin-top: 2rem; display: flex; flex-direction: column; align-items: flex-start; }
+  .tour-tab {
+    font-size: clamp(1.25rem, 1.9vw, 1.75rem);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    padding: 0.3rem 0 0.3rem 1rem;
+    color: #7a879b;
+    border-left: 4px solid transparent;
+    transition: color 220ms ease, border-color 220ms ease, transform 300ms var(--ease-out-quint);
+    text-align: left;
+  }
+  .tour-tab:hover { color: var(--color-navy); }
+  .tour-tab[aria-selected='true'] { color: var(--color-navy); border-left-color: var(--color-orange); transform: translateX(6px); }
+  .tour-phrase { margin-top: 1.75rem; max-width: 26ch; font-size: 1.125rem; min-height: 3.4em; }
+
+  .tour-screens { position: relative; aspect-ratio: 16 / 10; }
+  .tour-panel {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(24px) scale(0.985);
+    transition: opacity 420ms ease, transform 600ms var(--ease-out-quint), visibility 0s linear 420ms;
+  }
+  .tour-panel.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 420ms ease, transform 600ms var(--ease-out-quint), visibility 0s;
+  }
+  .tour-panel :global(.sig) { border-radius: 10px; box-shadow: 0 30px 70px -30px rgb(0 47 95 / 0.45); /* taste-skill-ignore: pantalla del producto */ }
+
+  @media (max-width: 1023px) {
+    .tour-pin { grid-template-columns: 1fr; min-height: 0; padding-block: 6rem 4rem; gap: 1.5rem; }
+    .tour-tabs {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 6px;
+      margin-inline: calc(var(--margin) * -1);
+      padding-inline: var(--margin);
+      scrollbar-width: none;
+    }
+    .tour-tab {
+      flex: none;
+      font-size: 1rem;
+      padding: 0 1rem;
+      min-height: 2.75rem;
+      background: var(--color-paper);
+      border-left: 0;
+      color: var(--color-ink);
+    }
+    .tour-tab[aria-selected='true'] { background: var(--color-navy); color: var(--color-paper); transform: none; }
+    .tour-phrase { margin-top: 1rem; min-height: 0; }
+  }
+</style>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('.tour-tab')];
+  const panels = [...document.querySelectorAll<HTMLElement>('.tour-panel')];
+  const phrase = document.getElementById('tour-phrase')!;
+  let actual = 0;
+
+  function mostrar(i: number, foco = false) {
+    if (i === actual || i < 0 || i >= tabs.length) return;
+    actual = i;
+    tabs.forEach((t, k) => {
+      t.setAttribute('aria-selected', String(k === i));
+      t.tabIndex = k === i ? 0 : -1;
+    });
+    panels.forEach((p, k) => p.classList.toggle('is-active', k === i));
+    phrase.textContent = panels[i].dataset.phrase || '';
+    if (foco) tabs[i].focus();
+    tabs[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
+
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('tour:pick', { detail: i }));
+      mostrar(i);
+    });
+    t.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); mostrar((i + 1) % tabs.length, true); }
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); mostrar((i - 1 + tabs.length) % tabs.length, true); }
+    });
+  });
+
+  // El scroll fijado (motion.ts) avisa qué módulo toca mostrar.
+  document.addEventListener('tour:step', (e) => mostrar((e as CustomEvent<number>).detail));
+  // El buscador de necesidades puede pedir un módulo por su id.
+  document.addEventListener('tour:module', (e) => {
+    const i = panels.findIndex((p) => p.id === `panel-${(e as CustomEvent<string>).detail}`);
+    if (i >= 0) { document.dispatchEvent(new CustomEvent('tour:pick', { detail: i })); mostrar(i); }
+  });
+</script>

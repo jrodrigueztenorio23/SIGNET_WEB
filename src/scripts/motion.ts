@@ -7,16 +7,6 @@ gsap.registerPlugin(ScrollTrigger);
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const root = document.documentElement;
 
-// El header toma la tinta del capítulo que tiene debajo.
-document.querySelectorAll<HTMLElement>('[data-ink]').forEach((section) => {
-  const ink = section.dataset.ink!;
-  ScrollTrigger.create({
-    trigger: section,
-    start: 'top 36px',
-    end: 'bottom 36px',
-    onToggle: (self) => self.isActive && root.style.setProperty('--header-ink', ink),
-  });
-});
 
 if (reduce) {
   document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
@@ -49,19 +39,71 @@ if (reduce) {
       scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.6 },
     });
   });
-  gsap.to('.hero h1', {
-    yPercent: -18,
+  gsap.to('.hero-copy', {
+    yPercent: -12,
     ease: 'none',
     scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
   });
 
-  const rings = document.querySelector<HTMLElement>('.rings');
-  if (rings && window.matchMedia('(hover: hover)').matches) {
-    const rx = gsap.quickTo(rings, 'x', { duration: 0.9, ease: 'power3.out' });
-    const ry = gsap.quickTo(rings, 'y', { duration: 0.9, ease: 'power3.out' });
+  // Hero: la pantalla de SIG entra inclinada, se endereza con el scroll y las tarjetas flotan delante.
+  gsap.from('.hero-screen', { x: 160, opacity: 0, duration: 1.6, ease: 'expo.out', delay: 0.25 });
+  gsap.from('.hero .float', { y: 40, opacity: 0, scale: 0.92, duration: 1, ease: 'back.out(1.6)', stagger: 0.15, delay: 0.9 });
+  const ancho = innerWidth >= 1024;
+  gsap.fromTo('.stage-inner', {
+    rotateY: ancho ? -16 : -10,
+    rotateX: ancho ? 7 : 5,
+    rotateZ: ancho ? 1.5 : 0,
+    transformOrigin: '0% 50%',
+  }, {
+    rotateY: 0,
+    rotateX: 0,
+    rotateZ: 0,
+    scale: 1.04,
+    yPercent: -8,
+    ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.8 },
+  });
+
+  // Cada pieza del hero sigue al cursor según su profundidad: las tarjetas más que la pantalla.
+  if (window.matchMedia('(hover: hover)').matches) {
+    const capas = [
+      ...gsap.utils.toArray<HTMLElement>('.hero [data-depth]').map((el) => ({ el, d: Number(el.dataset.depth) })),
+      ...gsap.utils.toArray<HTMLElement>('.rings').map((el) => ({ el, d: -0.8 })),
+    ].map(({ el, d }) => ({
+      d,
+      x: gsap.quickTo(el, 'x', { duration: 1, ease: 'power3.out' }),
+      y: gsap.quickTo(el, 'y', { duration: 1, ease: 'power3.out' }),
+    }));
     window.addEventListener('pointermove', (e) => {
-      rx((e.clientX / innerWidth - 0.5) * 40);
-      ry((e.clientY / innerHeight - 0.5) * 40);
+      const nx = e.clientX / innerWidth - 0.5;
+      const ny = e.clientY / innerHeight - 0.5;
+      capas.forEach((c) => { c.x(nx * 28 * c.d); c.y(ny * 22 * c.d); });
+    });
+  }
+
+  // Así se ve SIG: en escritorio la sección queda fija y el scroll recorre los módulos.
+  const tour = document.querySelector<HTMLElement>('.tour-pin');
+  const pasos = document.querySelectorAll('.tour-tab').length;
+  if (tour && pasos) {
+    ScrollTrigger.matchMedia({
+      '(min-width: 1024px)': () => {
+        const st = ScrollTrigger.create({
+          trigger: tour,
+          start: 'top top',
+          end: () => `+=${pasos * innerHeight * 0.45}`,
+          pin: true,
+          onUpdate: (self) => {
+            const i = Math.min(pasos - 1, Math.floor(self.progress * pasos));
+            document.dispatchEvent(new CustomEvent('tour:step', { detail: i }));
+          },
+        });
+        const ir = (e: Event) => {
+          const i = (e as CustomEvent<number>).detail;
+          lenis.scrollTo(st.start + ((i + 0.5) / pasos) * (st.end - st.start), { duration: 0.9 });
+        };
+        document.addEventListener('tour:pick', ir);
+        return () => document.removeEventListener('tour:pick', ir);
+      },
     });
   }
 
@@ -150,3 +192,21 @@ if (reduce) {
     });
   }
 }
+
+// El header toma la tinta del capítulo que tiene debajo. Se crea al final para que cuente el espacio
+// que agrega la sección fijada.
+document.querySelectorAll<HTMLElement>('[data-ink]').forEach((section) => {
+  const ink = section.dataset.ink!;
+  const bg = getComputedStyle(section).backgroundColor;
+  ScrollTrigger.create({
+    trigger: section,
+    start: 'top 36px',
+    end: 'bottom 36px',
+    onToggle: (self) => {
+      if (!self.isActive) return;
+      root.style.setProperty('--header-ink', ink);
+      root.style.setProperty('--header-bg', bg);
+    },
+  });
+});
+ScrollTrigger.refresh();
