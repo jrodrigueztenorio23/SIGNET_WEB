@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@import "@fontsource-variable/archivo/wdth.css";
+
+/* Colores de marca tomados de sigerp.pe. Cada capítulo de la página es uno de estos campos. */
+@theme {
+  --color-navy: #0f4d97;
+  --color-orange: #f8a116;
+  --color-indigo: #221f7b;
+  --color-electric: #3c53f4;
+  --color-mist: #efeff4;
+  --color-paper: #f8f8fb;
+  --color-ink: #0a1030;
+  --color-navy-deep: #0b3b75;
+  --color-indigo-up: #2d2a92;
+  --color-mist-down: #e2e2ea;
+
+  --font-sans: "Archivo Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Cinco tamaños en toda la página. */
+  --text-display: clamp(4.25rem, 13.5vw, 13.75rem);
+  --text-headline: clamp(3rem, 8vw, 8.25rem);
+  --text-title: clamp(1.75rem, 3vw, 2.75rem);
+  --text-body: 1.125rem;
+  --text-small: 0.875rem;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  --margin: clamp(1rem, 3vw, 2.5rem);
+  --header-ink: var(--color-paper);
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  background: var(--color-navy);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection { background: var(--color-orange); color: var(--color-ink); }
+
+:focus-visible {
+  outline: 3px solid var(--color-orange);
+  outline-offset: 3px;
+}
+
+.wrap { padding-inline: var(--margin); }
+
+.chapter {
+  position: relative;
+  min-height: 90svh;
+  overflow: clip;
+}
+
+.display {
+  font-size: var(--text-display);
+  font-weight: 860;
+  font-stretch: 88%;
+  line-height: 0.84;
+  letter-spacing: -0.035em;
+}
+
+.headline {
+  font-size: var(--text-headline);
+  font-weight: 820;
+  font-stretch: 90%;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+.title {
+  font-size: var(--text-title);
+  font-weight: 760;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+.small { font-size: var(--text-small); line-height: 1.45; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Botón único de la página: esquinas rectas, un solo relleno. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.25rem;
+  padding: 0 1.5rem;
+  font-weight: 700;
+  font-size: 1.0625rem;
+  background: var(--btn-bg, var(--color-orange));
+  color: var(--btn-ink, var(--color-ink));
+  transition: transform 160ms var(--ease-out-quint), background-color 200ms ease;
+  will-change: transform;
+}
+.btn:hover { background: var(--btn-bg-hover, #ffb23a); }
+.btn:active { transform: scale(0.97); }
+.btn svg { transition: transform 200ms var(--ease-out-quint); }
+.btn:hover svg { transform: translateX(4px); }
+
+.link-underline {
+  text-decoration: underline 2px transparent;
+  text-underline-offset: 6px;
+  transition: text-decoration-color 200ms ease, text-underline-offset 200ms var(--ease-out-quint);
+}
+.link-underline:hover, .link-underline:focus-visible {
+  text-decoration-color: currentColor;
+  text-underline-offset: 3px;
+}
+
+/* Entradas: el contenido se ve sin JavaScript; sólo se oculta cuando el script lo va a animar. */
+html.js [data-reveal] { opacity: 0; transform: translateY(24px); }
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] { opacity: 1; transform: none; }
+  *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; }
+}

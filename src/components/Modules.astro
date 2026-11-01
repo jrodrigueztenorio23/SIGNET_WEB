@@ -1,0 +1,255 @@
+---
+// Tablero de módulos: cada mosaico es un primer plano de una pieza real de la interfaz de SIG Advanced.
+---
+
+<section id="modulos" class="chapter bg-indigo text-paper" data-ink="#f8f8fb" aria-labelledby="modulos-title">
+  <div class="board pt-24 pb-2.5 md:pt-28">
+    <div class="tile t-head bg-indigo-up" data-tile>
+      <h2 id="modulos-title" class="headline-tile">12 módulos, un solo sistema</h2>
+      <p class="caption-text max-w-[34ch]">Cada área trabaja sobre los mismos datos: lo que vende Comercial ya está en Almacén y en Contabilidad.</p>
+    </div>
+
+    <div class="tile t-web bg-paper text-ink" data-tile>
+      <div class="ui ui-url" data-ui aria-hidden="true">
+        <span class="url-lock"></span>erp.sigadvanced.com<span class="url-caret"></span>
+      </div>
+      <div class="caption">
+        <h3>100% web</h3>
+        <p>Entra desde cualquier navegador, en la oficina o fuera de ella.</p>
+      </div>
+    </div>
+
+    <div class="tile t-sunat bg-orange text-ink" data-tile>
+      <div class="ui ui-sunat" data-ui aria-hidden="true">
+        <span class="sunat-doc tabular">F001-00004812</span>
+        <span class="sunat-chip">Aceptada por SUNAT</span>
+        <span class="sunat-total tabular">S/ 12,540.00</span>
+      </div>
+      <div class="caption">
+        <h3>Facturación electrónica</h3>
+        <p>Facturas, boletas, notas y guías enviadas a SUNAT desde Comercial.</p>
+      </div>
+    </div>
+
+    <div class="tile t-kardex bg-electric text-paper" data-tile>
+      <div class="ui ui-kardex" data-ui aria-hidden="true">
+        <span class="kx-label">Stock disponible</span>
+        <span class="kx-num tabular">1,248</span>
+        <span class="kx-unit">und</span>
+      </div>
+      <div class="caption">
+        <h3>Almacén</h3>
+        <p>Entradas, salidas y transferencias al instante.</p>
+      </div>
+    </div>
+
+    <div class="tile t-bank bg-mist text-ink" data-tile>
+      <div class="ui ui-bank" data-ui aria-hidden="true">
+        <span class="bank-row"><span>Saldo banco</span><b class="tabular">84,310.25</b></span>
+        <span class="bank-row"><span>Saldo libros</span><b class="tabular">84,310.25</b></span>
+        <span class="bank-ok">Conciliado</span>
+      </div>
+      <div class="caption">
+        <h3>Bancos</h3>
+        <p>Conciliación bancaria y caja chica.</p>
+      </div>
+    </div>
+
+    <div class="tile t-export bg-navy text-paper" data-tile>
+      <div class="ui ui-keys" data-ui aria-hidden="true">
+        <span class="key">PDF</span><span class="key key-x">Excel</span>
+      </div>
+      <div class="caption">
+        <h3>Reportes</h3>
+        <p>Todo se exporta a PDF y Excel.</p>
+      </div>
+    </div>
+
+    <div class="tile t-oc bg-paper text-ink" data-tile>
+      <div class="ui ui-toggle" data-ui aria-hidden="true">
+        <span class="tg-label">Autorizar O/C 000731</span>
+        <span class="tg"><span class="tg-knob"></span></span>
+      </div>
+      <div class="caption">
+        <h3>Compras</h3>
+        <p>Requerimientos y órdenes de compra con autorización por niveles.</p>
+      </div>
+    </div>
+
+    <div class="tile t-planilla bg-orange text-ink" data-tile>
+      <div class="ui ui-status" data-ui aria-hidden="true">
+        <span class="st-period">Planilla octubre</span>
+        <span class="st-chip">Calculada</span>
+      </div>
+      <div class="caption">
+        <h3>Planillas</h3>
+        <p>Regímenes laborales y pensionarios del Perú.</p>
+      </div>
+    </div>
+
+    <div class="tile t-crm bg-electric text-paper" data-tile>
+      <div class="ui ui-avatars" data-ui aria-hidden="true">
+        <span class="av" style="--c:#f8a116">MR</span><span class="av" style="--c:#f8f8fb">LQ</span><span class="av" style="--c:#0a1030;color:#f8f8fb">JT</span>
+      </div>
+      <div class="caption">
+        <h3>CRM</h3>
+        <p>Pipeline y oportunidades del equipo.</p>
+      </div>
+    </div>
+
+    <div class="tile t-conta bg-mist text-ink" data-tile>
+      <div class="ui ui-ledger" data-ui aria-hidden="true">
+        <span class="lg-row"><span>Debe</span><b class="tabular">12,540.00</b></span>
+        <span class="lg-row"><span>Haber</span><b class="tabular">12,540.00</b></span>
+      </div>
+      <div class="caption">
+        <h3>Contabilidad</h3>
+        <p>Asientos automáticos, libros y PLE.</p>
+      </div>
+    </div>
+
+    <div class="tile t-prod bg-navy text-paper" data-tile>
+      <div class="ui ui-progress" data-ui aria-hidden="true">
+        <span class="pg-num tabular">76%</span>
+        <span class="pg-track"><span class="pg-fill"></span></span>
+      </div>
+      <div class="caption">
+        <h3>Producción</h3>
+        <p>Órdenes, máquinas y costos.</p>
+      </div>
+    </div>
+
+    <div class="tile t-rest bg-paper text-ink" data-tile>
+      <div class="caption caption-top">
+        <h3>Y además</h3>
+        <p>Activos fijos, seguridad por perfiles, configuración y dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .board {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: 104px;
+    gap: 8px;
+    padding-inline: 10px;
+  }
+  .tile {
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .t-head   { grid-column: span 6; grid-row: span 2; justify-content: space-between; }
+  .t-web    { grid-column: span 6; grid-row: span 2; }
+  .t-sunat  { grid-column: span 6; grid-row: span 4; }
+  .t-kardex { grid-column: span 3; grid-row: span 4; }
+  .t-bank   { grid-column: span 3; grid-row: span 4; }
+  .t-export { grid-column: span 3; grid-row: span 2; }
+  .t-oc     { grid-column: span 6; grid-row: span 2; }
+  .t-planilla { grid-column: span 3; grid-row: span 2; }
+  .t-crm    { grid-column: span 3; grid-row: span 2; }
+  .t-conta  { grid-column: span 3; grid-row: span 2; }
+  .t-prod   { grid-column: span 3; grid-row: span 2; }
+  .t-rest   { grid-column: span 3; grid-row: span 2; justify-content: flex-start; }
+
+  .headline-tile {
+    font-size: clamp(2.25rem, 4vw, 3.75rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    max-width: 14ch;
+  }
+  .caption-text { font-size: 1rem; }
+  .caption { position: relative; z-index: 1; }
+  .caption h3 { font-size: 1.125rem; font-weight: 700; }
+  .caption p { font-size: 0.9375rem; line-height: 1.4; max-width: 30ch; }
+
+  .ui {
+    position: absolute;
+    font-weight: 700;
+    transition: transform 500ms var(--ease-out-quint);
+  }
+  .tile:hover .ui { transform: scale(1.04) translate(-1%, -1%); }
+
+  /* URL */
+  .ui-url {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    top: 22px; left: 22px;
+    display: flex; align-items: center; gap: 0.3em;
+    white-space: nowrap;
+    letter-spacing: -0.03em;
+  }
+  .url-lock { width: 0.45em; height: 0.55em; background: var(--color-navy); display: inline-block; }
+  .url-caret { width: 0.06em; height: 1em; background: var(--color-ink); display: inline-block; animation: blink 1s steps(1) infinite; }
+
+  /* SUNAT */
+  .ui-sunat {
+    font-size: clamp(1rem, 1.6vw, 1.4rem);
+    top: 1.25em; left: 1.25em; right: -4em;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 0.4em;
+  }
+  .sunat-doc { font-size: 3.2em; letter-spacing: -0.03em; line-height: 1; white-space: nowrap; }
+  .sunat-chip { font-size: 1.3em; background: var(--color-ink); color: #62e08a; padding: 0.25em 0.6em; }
+  .sunat-total { font-size: 4.6em; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; margin-top: 0.15em; }
+
+  /* Kardex */
+  .ui-kardex { top: 24px; left: 20px; display: flex; flex-direction: column; font-size: clamp(0.9rem, 1.2vw, 1.1rem); }
+  .kx-label { font-size: 1.1em; font-weight: 600; }
+  .kx-num { font-size: 6.4em; line-height: 0.9; letter-spacing: -0.05em; margin-left: -0.05em; }
+  .kx-unit { font-size: 2em; }
+
+  /* Bancos */
+  .ui-bank { top: 24px; left: 20px; right: -2.5em; font-size: clamp(1rem, 1.4vw, 1.25rem); display: flex; flex-direction: column; gap: 0.35em; }
+  .bank-row { display: flex; justify-content: space-between; gap: 1em; background: var(--color-paper); padding: 0.5em 0.7em; font-weight: 600; }
+  .bank-row b { font-size: 1.3em; }
+  .bank-ok { align-self: flex-start; margin-top: 0.4em; background: var(--color-navy); color: var(--color-paper); padding: 0.3em 0.7em; font-size: 1.5em; }
+
+  /* Teclas */
+  .ui-keys { top: 18px; right: -0.4em; display: flex; gap: 0.25em; font-size: clamp(1.75rem, 2.6vw, 2.5rem); }
+  .key { background: var(--color-paper); color: var(--color-navy); padding: 0.15em 0.45em; box-shadow: 0 0.12em 0 #b8c4dc; /* taste-skill-ignore: tecla dentro de data-ui */ }
+  .key-x { color: #107c41; }
+
+  /* Interruptor */
+  .ui-toggle { top: 18px; left: 20px; right: -1em; display: flex; align-items: center; gap: 0.5em; font-size: clamp(1.4rem, 2.4vw, 2.25rem); white-space: nowrap; }
+  .tg { width: 2.2em; height: 1.2em; background: var(--color-electric); position: relative; flex: none; }
+  .tg-knob { position: absolute; top: 0.15em; right: 0.15em; width: 0.9em; height: 0.9em; background: var(--color-paper); }
+
+  /* Estado */
+  .ui-status { top: 16px; left: 20px; right: -3em; display: flex; align-items: center; gap: 0.4em; font-size: clamp(1.1rem, 1.8vw, 1.6rem); white-space: nowrap; }
+  .st-chip { background: var(--color-ink); color: var(--color-paper); padding: 0.2em 0.55em; }
+
+  /* Avatares */
+  .ui-avatars { top: 14px; right: -0.6em; display: flex; font-size: clamp(1.4rem, 2.2vw, 2rem); }
+  .av { width: 2em; height: 2em; border-radius: 50%; background: var(--c); color: var(--color-ink); display: grid; place-items: center; margin-left: -0.45em; outline: 0.12em solid var(--color-electric); }
+
+  /* Libro */
+  .ui-ledger { top: 14px; left: 20px; right: -2em; display: flex; flex-direction: column; gap: 0.2em; font-size: clamp(1rem, 1.5vw, 1.35rem); }
+  .lg-row { display: flex; justify-content: space-between; gap: 1em; background: var(--color-paper); padding: 0.25em 0.6em; font-weight: 600; }
+
+  /* Progreso */
+  .ui-progress { top: 14px; left: 20px; right: -2em; font-size: clamp(1rem, 1.5vw, 1.35rem); display: flex; align-items: center; gap: 0.5em; }
+  .pg-num { font-size: 2.2em; letter-spacing: -0.03em; }
+  .pg-track { flex: 1; height: 0.7em; background: var(--color-navy-deep); }
+  .pg-fill { display: block; height: 100%; width: 76%; background: var(--color-orange); }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  @media (max-width: 1023px) {
+    .board { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 28vw; gap: 6px; }
+    .t-head, .t-web, .t-sunat, .t-oc { grid-column: span 2; }
+    .t-head { grid-row: span 2; }
+    .t-web, .t-oc { grid-row: span 2; }
+    .t-sunat { grid-row: span 3; }
+    .t-kardex, .t-bank { grid-column: span 1; grid-row: span 3; }
+    .t-export, .t-planilla, .t-crm, .t-conta, .t-prod, .t-rest { grid-column: span 1; grid-row: span 2; }
+    .headline-tile { font-size: 9vw; }
+  }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .board { grid-auto-rows: 120px; }
+  }
+</style>

@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Stats from '../components/Stats.astro';
+import Need from '../components/Need.astro';
+import Modules from '../components/Modules.astro';
+import Clients from '../components/Clients.astro';
+import Plan from '../components/Plan.astro';
+import About from '../components/About.astro';
+import Quote from '../components/Quote.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base>
+  <a href="#cifras" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:bg-paper focus:p-3">Saltar al contenido</a>
+  <Header />
+  <main>
+    <Hero />
+    <Stats />
+    <Need />
+    <Modules />
+    <Clients />
+    <Plan />
+    <About />
+    <Quote />
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  import '../scripts/motion';
+</script>

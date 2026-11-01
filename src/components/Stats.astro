@@ -1,0 +1,104 @@
+---
+import { modulos, totalOpciones } from '../config/site';
+
+const max = Math.max(...modulos.map((m) => m.opciones));
+const destacados = new Set(['contabilidad', 'comercial', 'almacen']);
+---
+
+<section id="cifras" class="chapter bg-mist text-ink" data-ink="#0a1030" aria-labelledby="cifras-title">
+  <div class="wrap relative z-10 pt-28 md:pt-32">
+    <h2 id="cifras-title" class="flex flex-col gap-3">
+      <span class="headline tabular" data-count={totalOpciones} data-reveal>{totalOpciones}</span>
+      <span class="title max-w-[22ch]" data-reveal>pantallas listas para trabajar, repartidas en 12 módulos</span>
+    </h2>
+  </div>
+
+  <ol class="bars" data-ui aria-label="Pantallas por módulo">
+    {modulos.map((m) => (
+      <li class:list={['bar', { 'is-accent': m.id === 'comercial' }]} style={`--h:${m.opciones / max}`} tabindex="0">
+        <span class:list={['bar-value tabular', { 'is-shown': destacados.has(m.id) }]}>{m.opciones}</span>
+        <span class="bar-fill" aria-hidden="true"></span>
+        <span class="bar-name">{m.nombre}<span class="sr-only">: {m.opciones} pantallas</span></span>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  #cifras { min-height: 100svh; display: flex; flex-direction: column; }
+  .bars {
+    margin-top: auto;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 8px;
+    align-items: end;
+    height: 62vh;
+    padding-top: 2rem;
+  }
+  .bar {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    outline-offset: -3px;
+  }
+  .bar-fill {
+    display: block;
+    height: calc(var(--h) * 58vh);
+    min-height: 6px;
+    background: var(--color-mist-down);
+    transform-origin: bottom;
+    transition: background-color 200ms ease;
+  }
+  .bar.is-accent .bar-fill { background: var(--color-orange); }
+  .bar:not(.is-accent) .bar-fill { background: #c9cbe0; }
+  .bar:hover .bar-fill, .bar:focus-visible .bar-fill { background: var(--color-navy); }
+  .bar.is-accent:hover .bar-fill, .bar.is-accent:focus-visible .bar-fill { background: #e08d00; }
+  .bar-value {
+    font-size: clamp(1.25rem, 2vw, 1.875rem);
+    font-weight: 760;
+    padding-bottom: 0.4rem;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 200ms ease, transform 200ms var(--ease-out-quint);
+  }
+  .bar-value.is-shown, .bar:hover .bar-value, .bar:focus-visible .bar-value { opacity: 1; transform: none; }
+  .bar-name {
+    position: absolute;
+    left: 0.5rem;
+    bottom: 0.6rem;
+    font-size: var(--text-small);
+    font-weight: 650;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+  }
+  .bar.is-accent .bar-name { color: var(--color-ink); }
+
+  @media (max-width: 767px) {
+    .bars {
+      grid-template-columns: 1fr;
+      height: auto;
+      gap: 6px;
+      padding: 2rem 0 3rem;
+    }
+    .bar { flex-direction: row; justify-content: flex-start; align-items: center; height: 2.25rem; }
+    .bar-fill {
+      height: 100%;
+      width: calc(var(--h) * 100%);
+      min-width: 4px;
+      transform-origin: left;
+    }
+    .bar-value { order: 2; padding: 0 0 0 0.5rem; font-size: 1rem; opacity: 1; transform: none; }
+    .bar-name {
+      writing-mode: horizontal-tb;
+      transform: none;
+      position: absolute;
+      left: 0.6rem;
+      bottom: auto;
+      top: 50%;
+      translate: 0 -50%;
+    }
+  }
+</style>

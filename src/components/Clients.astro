@@ -1,0 +1,48 @@
+---
+import { clientes } from '../config/site';
+---
+
+<section id="clientes" class="chapter bg-mist text-ink flex items-center" data-ink="#0a1030" aria-labelledby="clientes-title">
+  <div class="wrap w-full py-28">
+    <ul class="proof">
+      <li class="proof-head bg-orange">
+        <h2 id="clientes-title" class="proof-title">Empresas que ya trabajan con SIG</h2>
+      </li>
+      {clientes.map((c) => (
+        <li class="proof-tile" data-reveal><span>{c}</span></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .proof {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .proof-head { grid-column: span 2; padding: 24px; aspect-ratio: 3 / 1; display: flex; }
+  .proof-title {
+    font-size: clamp(2rem, 3.4vw, 3.25rem);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    max-width: 14ch;
+  }
+  .proof-tile {
+    aspect-ratio: 3 / 2;
+    background: var(--color-paper);
+    padding: 24px;
+  }
+  .proof-tile span {
+    font-size: clamp(1.25rem, 2.1vw, 2rem);
+    font-weight: 780;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  @media (max-width: 767px) {
+    .proof { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .proof-head { grid-column: span 2; aspect-ratio: auto; min-height: 120px; }
+    .proof-tile { padding: 18px; }
+  }
+</style>

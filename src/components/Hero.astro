@@ -1,0 +1,61 @@
+---
+import { empresa, mensajes, wa } from '../config/site';
+
+// Los arcos naranjas del logo de SIG, redibujados: tres anillos partidos que giran con el scroll y el cursor.
+const anillos = [
+  { r: 230, w: 34, dash: '420 90 260 120 300 140' },
+  { r: 178, w: 26, dash: '300 70 180 110 240 90' },
+  { r: 132, w: 18, dash: '160 60 220 80 110 50' },
+];
+---
+
+<section id="inicio" class="chapter hero bg-navy text-paper" data-ink="#f8f8fb" aria-labelledby="hero-title">
+  <div class="rings" aria-hidden="true">
+    <svg viewBox="-260 -260 520 520" width="520" height="520">
+      {anillos.map((a, i) => (
+        <circle class={`ring ring-${i}`} r={a.r} fill="none" stroke="#f8a116" stroke-width={a.w} stroke-dasharray={a.dash} />
+      ))}
+      <circle r="96" fill="#3c53f4" class="core" />
+    </svg>
+  </div>
+
+  <div class="wrap relative flex min-h-svh flex-col pt-[15svh] pb-10">
+    <h1 id="hero-title" class="display">
+      <span class="line block overflow-hidden"><span class="line-inner block text-paper">SIG</span></span>
+      <span class="line block overflow-hidden"><span class="line-inner block text-orange">Advanced</span></span>
+    </h1>
+
+    <div class="mt-auto ml-auto flex w-full flex-col gap-6 pt-12 md:w-[34vw] md:min-w-[26rem]">
+      <p class="text-[1.1875rem] leading-snug" data-reveal>
+        El ERP web que une ventas con facturación electrónica SUNAT, almacén, compras, bancos, producción,
+        contabilidad y planillas en un solo sistema, para empresas que quieren ver sus números al día.
+      </p>
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-4" data-reveal>
+        <a class="btn" data-magnetic href={wa(mensajes.demo)} target="_blank" rel="noopener">
+          Solicita una demo por WhatsApp
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 9h13M10 4l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+        </a>
+        <a href="#modulos" class="link-underline font-semibold">Ver los 12 módulos</a>
+      </div>
+    </div>
+  </div>
+  <p class="sr-only">{empresa.producto} es un producto de {empresa.nombre}.</p>
+</section>
+
+<style>
+  .hero { min-height: 100svh; }
+  .display { max-width: 100%; }
+  .rings {
+    position: absolute;
+    left: -8vw;
+    bottom: -24vw;
+    width: min(46vw, 680px);
+    aspect-ratio: 1;
+    pointer-events: none;
+  }
+  .rings svg { width: 100%; height: 100%; overflow: visible; }
+  .ring { transform-origin: 0 0; }
+  @media (max-width: 767px) {
+    .rings { width: 58vw; left: auto; right: -14vw; bottom: auto; top: 33svh; }
+  }
+</style>
