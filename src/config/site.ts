@@ -92,7 +92,7 @@ export const modulos: Modulo[] = [
   },
   {
     id: 'crm', nombre: 'CRM', opciones: 15,
-    resumen: 'Pipeline de ventas, oportunidades, contactos y equipos.',
+    resumen: 'Seguimiento de oportunidades de venta, contactos y equipos comerciales.',
     pantallas: ['Pipeline', 'Oportunidades', 'Mi día'],
     claves: ['crm', 'oportunidad', 'pipeline', 'prospecto', 'contacto', 'seguimiento', 'lead'],
   },

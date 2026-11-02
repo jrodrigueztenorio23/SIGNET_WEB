@@ -26,7 +26,7 @@ const info = (t: string): Chip => ({ t, c: 'info' });
 export const pantallas: Pantalla[] = [
   {
     id: 'comercial', modulo: 'Comercial', titulo: 'Despacho y Facturación',
-    frase: 'Del pedido a la factura electrónica, con el estado de SUNAT a la vista.',
+    frase: 'Del pedido a la factura electrónica, y ves al momento si SUNAT la aceptó.',
     filtros: [{ label: 'Cliente' }, { label: 'Serie', valor: 'F001' }, { label: 'Mes', valor: 'OCTUBRE' }],
     columnas: [{ t: 'Fecha' }, { t: 'Documento' }, { t: 'Cliente' }, { t: 'Moneda' }, { t: 'Total', num: true, total: true }, { t: 'SUNAT' }],
     filas: [
@@ -138,7 +138,7 @@ export const pantallas: Pantalla[] = [
   },
   {
     id: 'crm', modulo: 'CRM', titulo: 'Oportunidades',
-    frase: 'El pipeline del equipo de ventas, de la primera llamada al cierre.',
+    frase: 'El seguimiento de cada oportunidad de venta, de la primera llamada al cierre.',
     filtros: [{ label: 'Cliente' }, { label: 'Etapa', valor: 'TODAS' }, { label: 'Equipo', valor: 'VENTAS LIMA' }],
     columnas: [{ t: 'Oportunidad' }, { t: 'Cliente' }, { t: 'Responsable' }, { t: 'Cierre' }, { t: 'Monto', num: true, total: true }, { t: 'Etapa' }],
     filas: [

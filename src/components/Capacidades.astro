@@ -12,17 +12,17 @@ const { tone } = Astro.props;
 type Cap = { id: string; pregunta: string; corta: string; respuesta: string; modulo: string; pantalla?: string; ir?: string; claves: string[] };
 const caps: Cap[] = [
   {
-    id: 'facturar', corta: 'Facturar a SUNAT', pregunta: '¿Puede facturar electrónicamente a SUNAT?', modulo: 'Comercial', pantalla: 'comercial',
-    respuesta: 'Sí. Desde Comercial emites facturas, boletas, notas y guías, y SUNAT las acepta al momento. La cotización, el pedido, el despacho y la cobranza quedan en el mismo flujo.',
+    id: 'facturar', corta: 'Facturación electrónica', pregunta: '¿Puedo emitir facturas electrónicas a mis clientes?', modulo: 'Comercial', pantalla: 'comercial',
+    respuesta: 'Sí. Desde Comercial emites facturas, boletas, notas de crédito y guías electrónicas a tus clientes. SIG las envía a SUNAT y te muestra al momento si fueron aceptadas. La cotización, el pedido, el despacho y la cobranza quedan enlazados.',
     claves: ['factur', 'boleta', 'sunat', 'venta', 'vender', 'cotiza', 'pedido', 'cobr', 'cliente'],
   },
   {
-    id: 'stock', corta: 'Saber mi stock', pregunta: '¿Me dice cuánto stock tengo?', modulo: 'Almacén', pantalla: 'almacen',
+    id: 'stock', corta: 'Controlar mi stock', pregunta: '¿Me dice cuánto stock tengo?', modulo: 'Almacén', pantalla: 'almacen',
     respuesta: 'Sí. Almacén lleva el stock de cada producto por almacén, con su costo promedio, entradas, salidas, transferencias y guías de remisión electrónicas.',
     claves: ['stock', 'almacen', 'inventario', 'kardex', 'guia', 'producto', 'existencia'],
   },
   {
-    id: 'planilla', corta: 'Pagar la planilla', pregunta: '¿Calcula la planilla de mis trabajadores?', modulo: 'Planillas', pantalla: 'planillas',
+    id: 'planilla', corta: 'Calcular la planilla', pregunta: '¿Calcula la planilla de mis trabajadores?', modulo: 'Planillas', pantalla: 'planillas',
     respuesta: 'Sí. Registras trabajadores y contratos, SIG aplica los regímenes laborales y pensionarios del Perú y calcula la planilla de cada mes.',
     claves: ['planilla', 'sueldo', 'trabajador', 'personal', 'empleado', 'rrhh', 'nomina', 'afp'],
   },
@@ -32,7 +32,7 @@ const caps: Cap[] = [
     claves: ['compra', 'proveedor', 'orden', 'requerimiento', 'aprob', 'autoriz'],
   },
   {
-    id: 'bancos', corta: 'Conciliar el banco', pregunta: '¿Concilia mis cuentas de banco?', modulo: 'Bancos', pantalla: 'bancos',
+    id: 'bancos', corta: 'Conciliar mis bancos', pregunta: '¿Concilia mis cuentas de banco?', modulo: 'Bancos', pantalla: 'bancos',
     respuesta: 'Sí. Registras los movimientos de cada cuenta, la caja chica y los pagos a proveedores, y concilias el saldo del banco con el de tus libros.',
     claves: ['banco', 'caja', 'pago', 'pagar', 'tesoreria', 'concilia'],
   },
@@ -47,12 +47,12 @@ const caps: Cap[] = [
     claves: ['produc', 'fabric', 'maquina', 'operario', 'costo'],
   },
   {
-    id: 'notificaciones', corta: 'Vigilar a SUNAT', pregunta: '¿Me avisa si me llega una notificación de SUNAT?', modulo: 'Notificaciones SUNAT', ir: '#sunat',
-    respuesta: 'Sí. Trae las notificaciones del buzón SOL y de SUNAFIL, marca las críticas, las asigna a un responsable y te avisa al entrar mientras sigan sin atender.',
+    id: 'notificaciones', corta: 'Notificaciones de SUNAT', pregunta: '¿Me avisa cuando SUNAT me envía una notificación?', modulo: 'Notificaciones SUNAT', ir: '#sunat',
+    respuesta: 'Sí. Descarga las notificaciones de tu buzón SOL y de la casilla de SUNAFIL, resalta las urgentes, las asigna a un responsable y te avisa al entrar al sistema mientras sigan pendientes.',
     claves: ['notificac', 'buzon', 'sunafil', 'coactiva', 'esquela', 'multa', 'fiscaliz'],
   },
   {
-    id: 'ia', corta: 'Preguntarle en español', pregunta: '¿Le puedo preguntar cuánto vendí este mes?', modulo: 'Consultas con IA', ir: '#ia',
+    id: 'ia', corta: 'Consultar con IA', pregunta: '¿Le puedo preguntar cuánto vendí este mes?', modulo: 'Consultas con IA', ir: '#ia',
     respuesta: 'Sí. Escribes la pregunta como se la harías a tu contador y te responde con un texto, una tabla, un Excel o un gráfico, sin cambiar nada en tus datos.',
     claves: ['pregunt', 'inteligencia', 'reporte', 'grafico', 'excel', 'consulta'],
   },
@@ -64,7 +64,7 @@ const datos = caps.map(({ id, claves }) => ({ id, claves }));
   <div class="wrap cap-grid">
     <div class="cap-side">
       <h2 id="cap-title" class="headline cap-title" data-reveal>¿Qué puede hacer <span class="it it-accent">tu ERP?</span></h2>
-      <p class="lead cap-lead" data-reveal>Elige una pregunta y SIG Advanced te responde con la pantalla que lo resuelve.</p>
+      <p class="lead cap-lead" data-reveal>Elige una pregunta y mira la respuesta junto a la pantalla del sistema que lo resuelve.</p>
       <div class="cap-list" role="group" aria-label="Preguntas" data-reveal>
         {caps.map((c, i) => (
           <button type="button" class="cap-q" data-cap={c.id} aria-pressed={i === 0 ? 'true' : 'false'}>

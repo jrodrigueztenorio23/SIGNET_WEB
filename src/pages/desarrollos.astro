@@ -10,7 +10,7 @@ import { wa } from '../config/site';
 // Integraciones alrededor de SIG (centro del lienzo 600 × 600).
 const nodos = [
   { t: 'SUNAT', s: 'Comprobantes y buzón SOL', a: -90 },
-  { t: 'Apps móviles', s: 'Sobre los mismos datos', a: -30 },
+  { t: 'Apps móviles', s: 'Con los datos del ERP', a: -30 },
   { t: 'WhatsApp', s: 'Avisos y consultas', a: 30 },
   { t: 'Excel y BI', s: 'Reportes al día', a: 90 },
   { t: 'Tu tienda online', s: 'Pedidos y stock', a: 150 },
@@ -32,10 +32,10 @@ const desarrollos = [
   { t: 'App de pedidos', tipo: 'Móvil', d: 'La fuerza de ventas cotiza, toma pedidos, consulta stock y cuentas por cobrar desde el celular, y aprueba en el momento.', ic: 'M8 3h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm3 15h2' },
   { t: 'Punto de venta', tipo: 'Tienda', d: 'Venta en mostrador con lector de códigos, cobranza y comprobantes, conectado al stock del ERP.', ic: 'M3 7h18v4H3zM5 11v9h14v-9M9 15h6M7 4h10l2 3H5l2-3Z' },
   { t: 'Rendición de gastos', tipo: 'Móvil', d: 'El colaborador registra sus gastos con su comprobante y el aprobador los revisa según el flujo de la empresa.', ic: 'M6 3h12v18l-3-2-3 2-3-2-3 2V3Zm3 5h6M9 12h6' },
-  { t: 'App de planillas', tipo: 'Móvil y kiosco', d: 'Kiosco para el personal y aprobaciones desde el celular, sobre la planilla de SIG.', ic: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-6 9a6 6 0 0 1 12 0M17 8l2 2 3-3' },
+  { t: 'App de planillas', tipo: 'Móvil y kiosco', d: 'Un kiosco para el personal y aprobaciones desde el celular, conectados a la planilla de SIG.', ic: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-6 9a6 6 0 0 1 12 0M17 8l2 2 3-3' },
   { t: 'Mantenimiento de componentes', tipo: 'Web', d: 'Control de los componentes que salen a reparación y vuelven, para empresas con flota y equipos pesados.', ic: 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4 2.5-2.5Z' },
   { t: 'Logística a medida', tipo: 'Web', d: 'Un sistema logístico hecho sobre el proceso real de un cliente, que reemplazó a su sistema anterior.', ic: 'M2 16V7h11v9M13 10h4l3 3v3h-7M6 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm11 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z' },
-  { t: 'Personalizaciones', tipo: 'Dentro de tu SIG', d: 'Los procesos propios de tu empresa viven dentro de tu SIG sin tocar el sistema base: se actualiza y lo tuyo sigue ahí.', ic: 'M4 6h10M4 12h16M4 18h7M17 4v4M14 18h6m-3-3v6' },
+  { t: 'Personalizaciones', tipo: 'Dentro de tu SIG', d: 'Los procesos propios de tu empresa viven dentro de tu SIG sin modificar el sistema base: cuando SIG se actualiza, lo tuyo se mantiene.', ic: 'M4 6h10M4 12h16M4 18h7M17 4v4M14 18h6m-3-3v6' },
 ];
 
 const proceso = [
@@ -111,14 +111,14 @@ const tipos = [
           </svg>
         </div>
         <div>
-          <h2 id="int-title" class="headline dv-h2" data-reveal>Tus sistemas, <span class="it it-accent">conversando solos.</span></h2>
+          <h2 id="int-title" class="headline dv-h2" data-reveal>Tus sistemas, <span class="it it-accent">conectados entre sí.</span></h2>
           <p class="lead dv-p" data-reveal>
             SIG Advanced tiene su propia API: tus otros sistemas leen y registran datos en el ERP de forma segura,
             con usuario y permisos, sin exportar ni importar archivos a mano.
           </p>
           <ul class="dv-list" data-reveal>
-            <li><b>API REST con acceso por usuario.</b> Cada sistema entra con sus propias credenciales y sólo ve lo que le toca.</li>
-            <li><b>SUNAT ya viene conectado.</b> Comprobantes electrónicos, libros y el buzón SOL, desde el mismo ERP.</li>
+            <li><b>API REST con acceso por usuario.</b> Cada sistema entra con sus propias credenciales y solo ve lo que le corresponde.</li>
+            <li><b>La conexión con SUNAT ya viene incluida.</b> Comprobantes electrónicos, libros electrónicos y buzón SOL, desde el mismo ERP.</li>
             <li><b>Lo que ya usas, conectado.</b> Tu tienda online, tus reportes en Excel o Power BI, o el sistema de un proveedor.</li>
           </ul>
         </div>
@@ -135,10 +135,10 @@ const tipos = [
             un reporte o un aviso cuando algo necesita atención. Ya funciona en SIG Advanced con Consultas con IA.
           </p>
           <ul class="dv-list" data-reveal>
-            <li><b>Responde al equipo.</b> Ventas, cobranzas, stock o costos, preguntados en español.</li>
+            <li><b>Responde a tu equipo.</b> Preguntas sobre ventas, cobranzas, stock o costos, escritas con tus propias palabras.</li>
             <li><b>Prepara lo repetitivo.</b> El reporte del cierre, el resumen de la semana, el Excel de siempre.</li>
             <li><b>Avisa a tiempo.</b> Vencimientos, stock bajo o una notificación crítica, antes de que sea tarde.</li>
-            <li><b>Con límites claros.</b> Sólo lee si así lo decides, ve únicamente tu empresa y deja registro de cada acción.</li>
+            <li><b>Con límites claros.</b> Solo consulta datos, salvo que tú autorices otra cosa; ve únicamente tu empresa y deja registro de cada acción.</li>
           </ul>
         </div>
         <div class="agent" data-ui data-reveal data-cursor="Trabajando">

@@ -60,7 +60,7 @@ const doc = (() => {
 const estaciones = [
   { id: 'cot', n: 1, nombre: 'Cotización', d: 1.9, tag: P(2.1, -1.4, 2.7) },
   { id: 'alm', n: 2, nombre: 'Almacén', d: 5, tag: P(4.9, -2.2, 2.35) },
-  { id: 'fac', n: 3, nombre: 'Factura SUNAT', d: 7.2 + 2.6, tag: P(7, -2.6, 2.45) },
+  { id: 'fac', n: 3, nombre: 'Facturación', d: 7.2 + 2.6, tag: P(7, -2.6, 2.45) },
   { id: 'ban', n: 4, nombre: 'Bancos', d: 7.2 + 5 + 1.6, tag: P(8.9, -6.9, 2.1) },
   { id: 'con', n: 5, nombre: 'Contabilidad', d: 7.2 + 5 + 3.6, tag: P(10.2, -2.6, 1.15) },
   { id: 'rep', n: 6, nombre: 'Reportes e IA', d: largo - 1.2, tag: P(14.6, -6.6, 2.4) },
@@ -97,7 +97,7 @@ const trabajadores = [
 const pasos = [
   { t: 'Cotizas', d: 'Armas la cotización y, cuando el cliente la aprueba, se vuelve pedido sin digitar de nuevo.' },
   { t: 'Despachas', d: 'Almacén descuenta el stock y emite la guía de remisión electrónica.' },
-  { t: 'Facturas', d: 'La factura sale del mismo pedido y SUNAT la acepta al momento.' },
+  { t: 'Facturas', d: 'La factura electrónica se emite desde el mismo pedido y ves al momento si SUNAT la aceptó.' },
   { t: 'Cobras', d: 'Cuando llega el depósito, Bancos lo concilia contra la factura.' },
   { t: 'Se contabiliza solo', d: 'Cada paso dejó su asiento: Contabilidad cuadra sin volver a digitar.' },
   { t: 'Decides', d: 'Reportes y Consultas con IA te dicen cómo va tu empresa, al día.' },
@@ -111,13 +111,13 @@ const fracciones = estaciones.map((e) => e.d / largo);
   <div class="wrap flow-wrap">
     <div class="flow-head">
       <h2 id="flujo-title" class="headline flow-title" data-reveal>Registras una vez. <span class="it it-accent">SIG hace el resto.</span></h2>
-      <p class="lead flow-lead" data-reveal>Así viaja un pedido por la planta de SIG Advanced: cada área recibe lo que necesita y nadie vuelve a digitar.</p>
+      <p class="lead flow-lead" data-reveal>Sigue un pedido de principio a fin: cada área recibe lo que necesita y nadie vuelve a digitar lo mismo.</p>
     </div>
 
     <div class="flow-grid">
       <div class="plant" data-ui data-reveal data-cursor="En vivo">
         <svg viewBox="165 -40 1175 520" role="img" aria-labelledby="plant-desc" style={`--ciclo:${CICLO}s`}>
-          <desc id="plant-desc">Ilustración animada: un pedido avanza por una banda transportadora que pasa por Cotización, Almacén, Factura SUNAT, Bancos, Contabilidad y termina en la nube con Reportes e IA. En cada estación trabaja SIGNET, el personaje de soporte.</desc>
+          <desc id="plant-desc">Ilustración animada: un pedido avanza por una banda transportadora que pasa por Cotización, Almacén, Facturación, Bancos, Contabilidad y termina en la nube con Reportes e IA. En cada estación trabaja SIGNET, el personaje de soporte.</desc>
 
           <polygon class="floor" points={suelo} />
 
