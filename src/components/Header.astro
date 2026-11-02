@@ -17,18 +17,49 @@ const actual = (href: string) => href === Astro.url.pathname.replace(/\/$/, '');
 <header id="header" class="wrap fixed inset-x-0 top-0 z-50 flex h-18 items-center justify-between gap-6">
   <a href={portada ? '#inicio' : '/'} class="flex items-center gap-3 font-bold tracking-tight" aria-label={`${empresa.producto}, ir al inicio`}>
     <img src="/logo-sig.png" alt="" width="44" height="34" class="h-8.5 w-auto" />
-    <span class="text-[1.0625rem]">{empresa.producto}</span>
+    <span class="text-[1.0625rem] whitespace-nowrap max-[359px]:sr-only">{empresa.producto}</span>
   </a>
   <nav aria-label="Principal" class="hidden md:block">
     <ul class="flex gap-7 text-[1rem] font-medium">
       {enlaces.map((e) => <li><a class="link-underline" href={e.href} aria-current={actual(e.href) ? 'page' : undefined}>{e.texto}</a></li>)}
     </ul>
   </nav>
-  <a class="btn btn-header" href={wa(mensajes.demo)} target="_blank" rel="noopener">
-    <span class="hidden sm:inline">Solicita una demo</span>
-    <span class="sm:hidden">Demo</span>
-  </a>
+  <div class="flex items-center gap-2">
+    <a class="btn btn-header" href={wa(mensajes.demo)} target="_blank" rel="noopener">
+      <span class="hidden sm:inline">Solicita una demo</span>
+      <span class="sm:hidden">Demo</span>
+    </a>
+    <button type="button" class="menu-btn md:hidden" aria-expanded="false" aria-controls="menu-movil" aria-label="Abrir menú">
+      <span></span><span></span>
+    </button>
+  </div>
+  <nav id="menu-movil" class="menu-movil md:hidden" aria-label="Menú">
+    <ul>
+      {enlaces.map((e) => (
+        <li>
+          <a href={e.href} aria-current={actual(e.href) ? 'page' : undefined}>
+            {e.texto}
+            {e.href === '/desarrollos' && <small>Integraciones, IA y desarrollos a medida</small>}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
 </header>
+
+<script>
+  const header = document.getElementById('header')!;
+  const btn = header.querySelector<HTMLButtonElement>('.menu-btn')!;
+  const cerrar = () => { header.classList.remove('menu-on'); btn.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-label', 'Abrir menú'); };
+  btn.addEventListener('click', () => {
+    const abrir = !header.classList.contains('menu-on');
+    header.classList.toggle('menu-on', abrir);
+    btn.setAttribute('aria-expanded', String(abrir));
+    btn.setAttribute('aria-label', abrir ? 'Cerrar menú' : 'Abrir menú');
+  });
+  header.querySelectorAll('.menu-movil a').forEach((a) => a.addEventListener('click', cerrar));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrar(); });
+</script>
 
 <style>
   #header {
@@ -52,6 +83,28 @@ const actual = (href: string) => href === Astro.url.pathname.replace(/\/$/, '');
     box-shadow: 0 0 0 1px var(--header-line, transparent), 0 14px 40px -18px rgb(19 41 74 / 0.45); /* taste-skill-ignore: barra flotante */
   }
   nav a[aria-current='page'] { text-decoration-color: var(--c-accent); text-underline-offset: 3px; }
+  /* Menú del celular: el header sigue arriba y el panel se despliega debajo. */
+  .menu-btn {
+    width: 2.75rem; height: 2.75rem; border-radius: 50%; flex: none;
+    display: grid; place-content: center; gap: 6px;
+    background: color-mix(in srgb, currentColor 12%, transparent);
+  }
+  .menu-btn span { display: block; width: 18px; height: 2px; border-radius: 2px; background: currentColor; transition: transform 300ms var(--ease-out-quint); }
+  #header:global(.menu-on) .menu-btn span:first-child { transform: translateY(4px) rotate(45deg); }
+  #header:global(.menu-on) .menu-btn span:last-child { transform: translateY(-4px) rotate(-45deg); }
+  .menu-movil {
+    position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+    background: var(--c-dark); color: #fff; border-radius: 22px; padding: 0.5rem; outline: 1px solid rgb(255 255 255 / 0.12);
+    box-shadow: 0 24px 48px -18px rgb(11 42 91 / 0.55); /* taste-skill-ignore: menú desplegable */
+    opacity: 0; visibility: hidden; transform: translateY(-8px);
+    transition: opacity 220ms ease, transform 300ms var(--ease-out-quint), visibility 0s linear 220ms;
+  }
+  #header:not(:global(.is-float)) .menu-movil { left: var(--margin); right: var(--margin); }
+  #header:global(.menu-on) .menu-movil { opacity: 1; visibility: visible; transform: none; transition: opacity 220ms ease, transform 300ms var(--ease-out-quint), visibility 0s; }
+  .menu-movil a { display: block; padding: 0.85rem 1rem; border-radius: 14px; font-size: 1.125rem; font-weight: 700; }
+  .menu-movil a:active, .menu-movil a[aria-current='page'] { background: rgb(255 255 255 / 0.08); }
+  .menu-movil small { display: block; font-size: 0.8125rem; font-weight: 500; color: var(--c-accent); margin-top: 0.15rem; }
+  @media (prefers-reduced-motion: reduce) { .menu-movil, .menu-btn span { transition: none; } }
   .btn-header {
     min-height: 2.75rem;
     padding: 0 1.125rem;
