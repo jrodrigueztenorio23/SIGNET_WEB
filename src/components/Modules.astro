@@ -274,4 +274,20 @@ const { tone } = Astro.props;
   @media (min-width: 640px) and (max-width: 1023px) {
     .board { grid-auto-rows: 120px; }
   }
+  /* En celular las piezas grandes se achican para que se lean completas. */
+  @media (max-width: 639px) {
+    .ui-url { font-size: 6.4vw; left: 18px; right: 18px; }
+    .ui-sunat { font-size: 2.9vw; right: auto; }
+    .ui-bank, .ui-ledger, .ui-progress, .ui-status, .ui-toggle { right: 12px; left: 14px; }
+    .ui-bank { font-size: 0.8rem; }
+    .ui-ledger, .ui-progress { font-size: 0.85rem; }
+    .ui-status, .ui-toggle { font-size: 1.05rem; }
+    .ui-kardex { font-size: 0.8rem; }
+    .kx-num { font-size: 4.2em; }
+    .ui-keys { right: 10px; font-size: 1.15rem; }
+    .ui-status { font-size: 0.85rem; flex-wrap: wrap; white-space: normal; }
+    .ui-avatars { right: 12px; font-size: 1.1rem; }
+    .board { grid-auto-flow: dense; }
+    .caption h3 { font-size: calc(1.2rem * var(--italic-scale)); overflow-wrap: normal; }
+  }
 </style>

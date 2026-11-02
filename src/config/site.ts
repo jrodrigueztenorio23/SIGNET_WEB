@@ -3,6 +3,8 @@
 export const empresa = {
   producto: 'SIG Advanced',
   nombre: 'Lite Software & Consulting SAC',
+  // Para textos en pantalla: espacios que no se parten, así el nombre sólo puede bajar de línea antes del «&».
+  nombreTexto: 'Lite Software & Consulting SAC',
   // POR CONFIRMAR: teléfono, correo y dirección vienen del sitio anterior (sigerp.pe).
   whatsapp: '51933647183',
   whatsappVisible: '+51 933 647 183',

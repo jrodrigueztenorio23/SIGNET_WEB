@@ -49,7 +49,7 @@ const { tone } = Astro.props;
   .tour-pin {
     min-height: 100svh;
     display: grid;
-    grid-template-columns: minmax(16rem, 4fr) 8fr;
+    grid-template-columns: minmax(16rem, 4fr) minmax(0, 8fr);
     gap: clamp(2rem, 4vw, 4rem);
     align-items: center;
     padding-block: 6.5rem 3rem;
@@ -95,7 +95,7 @@ const { tone } = Astro.props;
   .tour-panel :global(.sig) { border-radius: 10px; box-shadow: var(--shadow); /* taste-skill-ignore: pantalla del producto */ }
 
   @media (max-width: 1023px) {
-    .tour-pin { grid-template-columns: 1fr; min-height: 0; padding-block: 6rem 4rem; gap: 1.5rem; }
+    .tour-pin { grid-template-columns: minmax(0, 1fr); min-height: 0; padding-block: 6rem 4rem; gap: 1.5rem; }
     .tour-tabs {
       flex-direction: row;
       flex-wrap: nowrap;

@@ -39,7 +39,7 @@ const hechos = [
       <span class="line block overflow-hidden"><span class="line-inner block"><span class="it it-accent">y con IA.</span></span></span>
     </h1>
     <p class="hero-lead lead" data-reveal>
-      <strong>{empresa.producto}</strong> es el ERP web de {empresa.nombre}: ventas con facturación electrónica SUNAT,
+      <strong>{empresa.producto}</strong> es el ERP web de <span class="whitespace-nowrap">{empresa.nombre}</span>: ventas con facturación electrónica SUNAT,
       almacén, compras, bancos, producción, contabilidad y planillas en un solo sistema, con un equipo que te acompaña
       después de la venta.
     </p>
@@ -165,5 +165,10 @@ const hechos = [
     .f-sales { width: 160px; }
     .f-sales b { font-size: 19px; }
     .f-bars { height: 30px; }
+    /* En celular la pantalla entra completa, con un giro leve. */
+    .stage { width: auto; margin: 3.5rem var(--margin) 2rem; }
+    .stage-inner { transform: rotateY(-6deg) rotateX(3deg); transform-origin: 50% 50%; }
+    .f-sunat { top: -22%; left: -2%; }
+    .f-sales { right: -2%; bottom: -22%; }
   }
 </style>

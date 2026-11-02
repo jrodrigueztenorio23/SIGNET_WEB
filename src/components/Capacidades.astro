@@ -197,7 +197,7 @@ const datos = caps.map(({ id, claves }) => ({ id, claves }));
   .chat-input button:active { transform: scale(0.92); }
 
   @media (max-width: 1023px) {
-    .cap-grid { grid-template-columns: 1fr; padding-block: 6rem 4rem; }
+    .cap-grid { grid-template-columns: minmax(0, 1fr); padding-block: 6rem 4rem; }
     .chat-body { min-height: 0; }
   }
   @media (max-width: 599px) {
