@@ -1,9 +1,9 @@
-# Publica la web en GitHub Pages cada vez que se sube un cambio a master.
+# Publica la web en GitHub Pages cada vez que se sube un cambio a main.
 name: Publicar en GitHub Pages
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
