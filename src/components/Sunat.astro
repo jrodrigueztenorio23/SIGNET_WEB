@@ -19,9 +19,9 @@ const filas: Fila[] = [
 const chip = { PENDIENTE: 'bad', 'EN REVISIÓN': 'warn', ATENDIDA: 'ok' } as const;
 
 const puntos = [
-  { t: 'Buzón SOL y casilla SUNAFIL', d: 'Trae las notificaciones, los mensajes y sus adjuntos con la Clave SOL de la empresa, y guarda tu propio histórico.' },
+  { t: 'Buzón SOL y casilla SUNAFIL', d: 'Con la Clave SOL de tu empresa, SIG descarga las notificaciones, los mensajes y sus adjuntos, y te guarda todo el historial.' },
   { t: 'Lo crítico va primero', d: 'Las cobranzas coactivas y las esquelas con plazo aparecen primero y en rojo, y el sistema te avisa al entrar mientras sigan pendientes.' },
-  { t: 'Cada una tiene responsable', d: 'Estado, responsable y comentario por notificación. Cada cambio queda en el historial con el usuario y la hora.' },
+  { t: 'Cada una tiene responsable', d: 'Asignas cada notificación a una persona y ves en qué estado está. Cada cambio queda registrado con el usuario, la fecha y la hora.' },
   { t: 'Declaraciones y pagos', d: 'Consulta lo que declaraste y pagaste a SUNAT en cada periodo y descarga la constancia.' },
 ];
 ---
@@ -31,8 +31,8 @@ const puntos = [
     <div class="sunat-copy">
       <h2 id="sunat-title" class="headline sunat-title" data-reveal>Que SUNAT no te tome <span class="it it-accent">por sorpresa</span></h2>
       <p class="sunat-lead" data-reveal>
-        Las notificaciones del buzón electrónico llegan a SIG Advanced. Las críticas se marcan solas, se asignan a una
-        persona y no se cierran hasta que alguien las atiende.
+        SIG revisa tu buzón electrónico de SUNAT y te trae cada notificación. Las urgentes se marcan solas, cada una
+        tiene un responsable y no se da por cerrada hasta que alguien la atiende.
       </p>
       <ul class="sunat-points">
         {puntos.map((p) => (

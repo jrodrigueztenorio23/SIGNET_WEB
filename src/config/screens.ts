@@ -40,7 +40,7 @@ export const pantallas: Pantalla[] = [
   },
   {
     id: 'almacen', modulo: 'Almacén', titulo: 'Productos / Servicios',
-    frase: 'Stock por almacén, costo promedio y movimientos al instante.',
+    frase: 'Cuánto tienes de cada producto, dónde está y cuánto te costó.',
     filtros: [{ label: 'Producto' }, { label: 'Línea', valor: 'FERRETERÍA' }, { label: 'Almacén', valor: 'PRINCIPAL' }],
     columnas: [{ t: 'Código' }, { t: 'Producto' }, { t: 'Unidad' }, { t: 'Almacén' }, { t: 'Stock', num: true, total: true }, { t: 'Costo prom.', num: true }],
     filas: [
@@ -54,7 +54,7 @@ export const pantallas: Pantalla[] = [
   },
   {
     id: 'compras', modulo: 'Compras', titulo: 'Orden de Compra',
-    frase: 'Requerimientos y órdenes de compra con autorización por niveles.',
+    frase: 'Del requerimiento a la orden de compra, siempre con aprobación.',
     filtros: [{ label: 'Proveedor' }, { label: 'Estado', valor: 'TODOS' }, { label: 'Mes', valor: 'OCTUBRE' }],
     columnas: [{ t: 'N° O/C' }, { t: 'Fecha' }, { t: 'Proveedor' }, { t: 'Moneda' }, { t: 'Total', num: true, total: true }, { t: 'Estado' }],
     filas: [
@@ -82,7 +82,7 @@ export const pantallas: Pantalla[] = [
   },
   {
     id: 'contabilidad', modulo: 'Contabilidad', titulo: 'Libro Diario',
-    frase: 'Asientos automáticos desde cada módulo, libros oficiales y PLE.',
+    frase: 'Los asientos llegan solos desde cada módulo; tú revisas los libros y el PLE.',
     filtros: [{ label: 'Periodo', valor: '2026-10' }, { label: 'Tipo de asiento', valor: 'VENTAS' }, { label: 'Cuenta' }],
     columnas: [{ t: 'Asiento' }, { t: 'Fecha' }, { t: 'Cuenta' }, { t: 'Glosa' }, { t: 'Debe', num: true, total: true }, { t: 'Haber', num: true }],
     filas: [
@@ -96,7 +96,7 @@ export const pantallas: Pantalla[] = [
   },
   {
     id: 'planillas', modulo: 'Planillas', titulo: 'Trabajadores',
-    frase: 'Regímenes laborales, pensiones y planilla calculada a tiempo.',
+    frase: 'La planilla de cada mes, calculada según el régimen de cada trabajador.',
     filtros: [{ label: 'Trabajador' }, { label: 'Régimen', valor: 'GENERAL' }, { label: 'Estado', valor: 'ACTIVO' }],
     columnas: [{ t: 'Código' }, { t: 'Trabajador' }, { t: 'Cargo' }, { t: 'Pensión' }, { t: 'Sueldo', num: true, total: true }, { t: 'Estado' }],
     filas: [

@@ -10,18 +10,18 @@ const { tone, id = 'cifras' } = Astro.props;
 
 // Frases cortas para leer de un vistazo.
 const corto: Record<string, string> = {
-  comercial: 'Cotizaciones, ventas y facturación electrónica',
-  contabilidad: 'Asientos, libros y PLE',
-  planillas: 'Personal, contratos y planilla',
-  compras: 'Requerimientos y órdenes de compra',
-  produccion: 'Órdenes, máquinas y costos',
+  comercial: 'De la cotización a la factura electrónica',
+  contabilidad: 'Asientos automáticos y libros al día',
+  planillas: 'La planilla de cada mes, calculada',
+  compras: 'Compras con aprobación',
+  produccion: 'Lo que fabricas y cuánto te cuesta',
   configuracion: 'Productos, unidades y zonas',
-  almacen: 'Stock, guías y transferencias',
+  almacen: 'Tu stock siempre al día',
   bancos: 'Pagos, caja chica y conciliación',
-  activos: 'Activos, movimientos y reparaciones',
-  crm: 'Seguimiento de oportunidades de venta',
-  seguridad: 'Usuarios, perfiles y auditoría',
-  dashboard: 'Indicadores en una sola vista',
+  activos: 'Tus activos y sus reparaciones',
+  crm: 'Seguimiento a tus posibles clientes',
+  seguridad: 'Quién entra y qué puede hacer',
+  dashboard: 'Tus números en una pantalla',
 };
 const por = (ids: string[]) =>
   ids.map((i) => {
@@ -40,7 +40,7 @@ const areas = [
   <div class="wrap mv-wrap">
     <div class="mv-head">
       <h2 id={`${id}-title`} class="headline mv-title" data-reveal>Todo tu negocio, <span class="it it-accent">en un solo sistema.</span></h2>
-      <p class="lead mv-lead" data-reveal>Doce módulos que comparten los mismos datos: lo que registra un área, la otra ya lo tiene. Pasa el mouse o toca cada uno para ver qué hace.</p>
+      <p class="lead mv-lead" data-reveal>Cada área de tu empresa tiene su módulo y todos comparten la misma información: lo que registra Ventas ya lo ve Almacén y ya está en Contabilidad. Pasa el mouse o toca cada uno para ver qué hace.</p>
     </div>
 
     <div class="areas">

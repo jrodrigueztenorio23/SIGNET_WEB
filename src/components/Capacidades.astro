@@ -13,47 +13,47 @@ type Cap = { id: string; pregunta: string; corta: string; respuesta: string; mod
 const caps: Cap[] = [
   {
     id: 'facturar', corta: 'Facturación electrónica', pregunta: '¿Puedo emitir facturas electrónicas a mis clientes?', modulo: 'Comercial', pantalla: 'comercial',
-    respuesta: 'Sí. Desde Comercial emites facturas, boletas, notas de crédito y guías electrónicas a tus clientes. SIG las envía a SUNAT y te muestra al momento si fueron aceptadas. La cotización, el pedido, el despacho y la cobranza quedan enlazados.',
+    respuesta: 'Sí. Desde Comercial emites tus facturas, boletas, notas de crédito y guías electrónicas. SIG las envía a SUNAT y en el momento te dice si fueron aceptadas. Y como todo sale del mismo pedido, no vuelves a digitar nada.',
     claves: ['factur', 'boleta', 'sunat', 'venta', 'vender', 'cotiza', 'pedido', 'cobr', 'cliente'],
   },
   {
-    id: 'stock', corta: 'Controlar mi stock', pregunta: '¿Me dice cuánto stock tengo?', modulo: 'Almacén', pantalla: 'almacen',
-    respuesta: 'Sí. Almacén lleva el stock de cada producto por almacén, con su costo promedio, entradas, salidas, transferencias y guías de remisión electrónicas.',
+    id: 'stock', corta: 'Controlar mi stock', pregunta: '¿Puedo saber cuánto stock tengo?', modulo: 'Almacén', pantalla: 'almacen',
+    respuesta: 'Sí. En Almacén ves cuánto tienes de cada producto, en qué almacén está y cuánto te costó. Cada venta, compra o transferencia actualiza el stock al instante.',
     claves: ['stock', 'almacen', 'inventario', 'kardex', 'guia', 'producto', 'existencia'],
   },
   {
     id: 'planilla', corta: 'Calcular la planilla', pregunta: '¿Calcula la planilla de mis trabajadores?', modulo: 'Planillas', pantalla: 'planillas',
-    respuesta: 'Sí. Registras trabajadores y contratos, SIG aplica los regímenes laborales y pensionarios del Perú y calcula la planilla de cada mes.',
+    respuesta: 'Sí. Registras a tus trabajadores y sus contratos una sola vez, y SIG calcula la planilla de cada mes según el régimen laboral y el sistema de pensiones de cada uno.',
     claves: ['planilla', 'sueldo', 'trabajador', 'personal', 'empleado', 'rrhh', 'nomina', 'afp'],
   },
   {
     id: 'compras', corta: 'Aprobar compras', pregunta: '¿Puedo aprobar las compras antes de hacerlas?', modulo: 'Compras', pantalla: 'compras',
-    respuesta: 'Sí. Los requerimientos se convierten en órdenes de compra y cada orden pasa por autorización, por niveles, antes de llegar al proveedor.',
+    respuesta: 'Sí. Cada área pide lo que necesita con un requerimiento, que luego pasa a orden de compra. La orden no le llega al proveedor hasta que la aprueba quien corresponde.',
     claves: ['compra', 'proveedor', 'orden', 'requerimiento', 'aprob', 'autoriz'],
   },
   {
-    id: 'bancos', corta: 'Conciliar mis bancos', pregunta: '¿Concilia mis cuentas de banco?', modulo: 'Bancos', pantalla: 'bancos',
-    respuesta: 'Sí. Registras los movimientos de cada cuenta, la caja chica y los pagos a proveedores, y concilias el saldo del banco con el de tus libros.',
+    id: 'bancos', corta: 'Conciliar mis bancos', pregunta: '¿Me ayuda a conciliar mis cuentas bancarias?', modulo: 'Bancos', pantalla: 'bancos',
+    respuesta: 'Sí. Registras los movimientos de cada cuenta, la caja chica y los pagos a proveedores, y comparas el saldo del banco con el de tus libros para que todo cuadre.',
     claves: ['banco', 'caja', 'pago', 'pagar', 'tesoreria', 'concilia'],
   },
   {
-    id: 'conta', corta: 'Llevar la contabilidad', pregunta: '¿Lleva la contabilidad y los libros electrónicos?', modulo: 'Contabilidad', pantalla: 'contabilidad',
-    respuesta: 'Sí. Ventas, compras y bancos generan sus asientos solos; tú revisas los libros oficiales, el PLE y el flujo de caja.',
+    id: 'conta', corta: 'Llevar la contabilidad', pregunta: '¿Me lleva la contabilidad y los libros electrónicos?', modulo: 'Contabilidad', pantalla: 'contabilidad',
+    respuesta: 'Sí. Las ventas, las compras y los movimientos de banco generan sus asientos solos. Tú revisas los libros, generas el PLE para SUNAT y ves tu flujo de caja.',
     claves: ['contab', 'libro', 'ple', 'asiento', 'balance', 'flujo', 'sire', 'pdt'],
   },
   {
-    id: 'produccion', corta: 'Costear la producción', pregunta: '¿Controla mi producción y sus costos?', modulo: 'Producción', pantalla: 'produccion',
-    respuesta: 'Sí. Planificas y lanzas órdenes de producción, asignas máquinas y operarios y distribuyes los costos de cada orden.',
+    id: 'produccion', corta: 'Costos de producción', pregunta: '¿Me dice cuánto me cuesta producir?', modulo: 'Producción', pantalla: 'produccion',
+    respuesta: 'Sí. Planificas qué vas a fabricar, lanzas las órdenes de producción con sus máquinas y operarios, y al final sabes cuánto te costó de verdad cada orden.',
     claves: ['produc', 'fabric', 'maquina', 'operario', 'costo'],
   },
   {
     id: 'notificaciones', corta: 'Notificaciones de SUNAT', pregunta: '¿Me avisa cuando SUNAT me envía una notificación?', modulo: 'Notificaciones SUNAT', ir: '#sunat',
-    respuesta: 'Sí. Descarga las notificaciones de tu buzón SOL y de la casilla de SUNAFIL, resalta las urgentes, las asigna a un responsable y te avisa al entrar al sistema mientras sigan pendientes.',
+    respuesta: 'Sí. SIG revisa tu buzón SOL y tu casilla de SUNAFIL y te trae las notificaciones. Las urgentes aparecen primero, cada una tiene un responsable y el sistema te lo recuerda al entrar mientras sigan pendientes.',
     claves: ['notificac', 'buzon', 'sunafil', 'coactiva', 'esquela', 'multa', 'fiscaliz'],
   },
   {
     id: 'ia', corta: 'Consultar con IA', pregunta: '¿Le puedo preguntar cuánto vendí este mes?', modulo: 'Consultas con IA', ir: '#ia',
-    respuesta: 'Sí. Escribes la pregunta como se la harías a tu contador y te responde con un texto, una tabla, un Excel o un gráfico, sin cambiar nada en tus datos.',
+    respuesta: 'Sí. Le escribes como le preguntarías a tu contador, por ejemplo «¿cuánto vendí en octubre?», y te responde con un texto, una tabla, un Excel o un gráfico. Solo consulta: no cambia nada de tus datos.',
     claves: ['pregunt', 'inteligencia', 'reporte', 'grafico', 'excel', 'consulta'],
   },
 ];
