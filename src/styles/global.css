@@ -1,26 +1,18 @@
 @import "tailwindcss";
 @import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource-variable/fraunces/wght-italic.css";
 
-/* Colores de marca tomados de sigerp.pe. Cada capítulo de la página es uno de estos campos. */
+/* Colores fijos del producto (las réplicas de SIG usan los suyos). */
 @theme {
-  /* Paleta del propio SIG Advanced (SIGNET_ADVANCED/wwwroot/Css/theme.css), más sobria. */
   --color-navy: #002f5f;
-  --color-navy-deep: #001f40;
   --color-indigo: #004080;
-  --color-indigo-up: #0b4c91;
-  --color-electric: #1d5fa8;
   --color-orange: #f9a216;
-  --color-sky: #e9f0f8;
-  --color-mist: #f5f7fa;
-  --color-mist-down: #e2e8f0;
   --color-paper: #ffffff;
   --color-ink: #1a2332;
 
   --font-sans: "Archivo Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-  /* Cinco tamaños en toda la página. */
-  --text-display: clamp(4.25rem, 13.5vw, 13.75rem);
-  --text-headline: clamp(3rem, 8vw, 8.25rem);
+  --text-headline: clamp(2.75rem, 5.4vw, 5.5rem);
   --text-title: clamp(1.75rem, 3vw, 2.75rem);
   --text-body: 1.125rem;
   --text-small: 0.875rem;
@@ -28,9 +20,61 @@
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Cada sección elige un tono (light, soft, tint, dark); los componentes sólo usan las variables del tono. */
+:root {
+  /* Niebla azul (modelo 2, elegido el 01/11/2026): celestes grisáceos, marino de SIG y el naranja de la marca. */
+  --c-light: #f8fafc;
+  --c-soft: #eef3f8;
+  --c-tint: #e4ecf5;
+  --c-dark: #13294a;
+  --c-dark-2: #1c3a63;
+  --c-head: #15335c;
+  --c-ink: #18212d;
+  --c-ink-2: #4c5869;
+  --c-accent: #f9a216;
+  --c-accent-hover: #ffb43f;
+  --c-accent-ink: #13294a;
+  --c-blue: #2e6db3;
+  --c-blue-soft: #e2ecf7;
+  --c-peach-soft: #fdf2e1;
+  --font-italic: "Fraunces Variable", Georgia, serif;
+  --italic-weight: 380;
+  --italic-scale: 1;
+}
+.tone-light, .tone-soft, .tone-tint {
+  --fg: var(--c-ink);
+  --fg-2: var(--c-ink-2);
+  --head: var(--c-head);
+  --card: #ffffff;
+  --card-fg: var(--c-ink);
+  --chip: var(--c-soft);
+  --chip-2: var(--c-blue-soft);
+  --line: rgb(26 35 50 / 0.12);
+  --strong: var(--c-head);
+  --strong-fg: #ffffff;
+  --shadow: 0 30px 70px -36px rgb(11 42 91 / 0.35);
+}
+.tone-light { --bg: var(--c-light); --card: var(--c-soft); }
+.tone-soft { --bg: var(--c-soft); --chip: #ffffff; }
+.tone-tint { --bg: var(--c-tint); --chip: #ffffff; }
+.tone-dark {
+  --bg: var(--c-dark);
+  --fg: #ffffff;
+  --fg-2: rgb(255 255 255 / 0.74);
+  --head: #ffffff;
+  --card: #ffffff;
+  --card-fg: var(--c-ink);
+  --chip: rgb(255 255 255 / 0.07);
+  --chip-2: rgb(255 255 255 / 0.13);
+  --line: rgb(255 255 255 / 0.16);
+  --strong: #ffffff;
+  --strong-fg: var(--c-dark);
+  --shadow: 0 40px 90px -30px rgb(0 0 0 / 0.55);
+}
+
 :root {
   --margin: clamp(1rem, 3vw, 2.5rem);
-  --header-ink: var(--color-paper);
+  --header-ink: var(--c-ink);
   color-scheme: light;
 }
 
@@ -46,16 +90,16 @@ body {
   font-family: var(--font-sans);
   font-size: var(--text-body);
   line-height: 1.5;
-  background: var(--color-navy);
-  color: var(--color-ink);
+  background: var(--c-light);
+  color: var(--c-ink);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
 
-::selection { background: var(--color-orange); color: var(--color-ink); }
+::selection { background: var(--c-accent); color: var(--c-accent-ink); }
 
 :focus-visible {
-  outline: 3px solid var(--color-orange);
+  outline: 3px solid var(--c-accent);
   outline-offset: 3px;
 }
 
@@ -65,50 +109,61 @@ body {
   position: relative;
   min-height: 90svh;
   overflow: clip;
-}
-
-.display {
-  font-size: var(--text-display);
-  font-weight: 860;
-  font-stretch: 88%;
-  line-height: 0.84;
-  letter-spacing: -0.035em;
+  background: var(--bg);
+  color: var(--fg);
 }
 
 .headline {
   font-size: var(--text-headline);
-  font-weight: 820;
-  font-stretch: 90%;
-  line-height: 0.9;
+  font-weight: 780;
+  font-stretch: 92%;
+  line-height: 0.98;
   letter-spacing: -0.03em;
+  color: var(--head);
 }
 
 .title {
   font-size: var(--text-title);
-  font-weight: 760;
-  line-height: 1.02;
+  font-weight: 740;
+  line-height: 1.04;
   letter-spacing: -0.02em;
+  color: var(--head);
 }
 
+/* La palabra en cursiva: una serif fina dentro de los titulares, para que no se vean planos. */
+.it {
+  font-family: var(--font-italic);
+  font-style: italic;
+  font-weight: var(--italic-weight);
+  font-stretch: 100%;
+  font-size: calc(1em * var(--italic-scale));
+  letter-spacing: -0.01em;
+  line-height: 0.9;
+}
+.it-accent { color: var(--c-accent); }
+
+.lead { font-size: 1.1875rem; line-height: 1.5; color: var(--fg-2); }
 .small { font-size: var(--text-small); line-height: 1.45; }
+.muted { color: var(--fg-2); }
 
 .tabular { font-variant-numeric: tabular-nums; }
 
-/* Botón único de la página: esquinas rectas, un solo relleno. */
+/* Botón principal: relleno del acento, esquinas apenas redondeadas. */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
   min-height: 3.25rem;
   padding: 0 1.5rem;
+  border-radius: 999px;
   font-weight: 700;
   font-size: 1.0625rem;
-  background: var(--btn-bg, var(--color-orange));
-  color: var(--btn-ink, var(--color-ink));
+  background: var(--c-accent);
+  color: var(--c-accent-ink);
   transition: transform 160ms var(--ease-out-quint), background-color 200ms ease;
   will-change: transform;
 }
-.btn:hover { background: var(--btn-bg-hover, #ffb43f); }
+.btn:hover { background: var(--c-accent-hover); }
 .btn:active { transform: scale(0.97); }
 .btn svg { transition: transform 200ms var(--ease-out-quint); }
 .btn:hover svg { transform: translateX(4px); }
@@ -122,6 +177,32 @@ body {
   text-decoration-color: currentColor;
   text-underline-offset: 3px;
 }
+
+/* Puntero propio (motion.ts). El del sistema se oculta sólo cuando el propio está activo. */
+html.has-cursor, html.has-cursor * { cursor: none !important; }
+html.has-cursor input:not([type='radio']):not([type='checkbox']), html.has-cursor textarea { cursor: text !important; }
+.cur-dot, .cur-ring { position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none; opacity: 0; border-radius: 50%; }
+.cur-dot { width: 8px; height: 8px; margin: -4px 0 0 -4px; background: var(--c-accent); transition: opacity 200ms ease, scale 200ms ease; }
+.cur-ring {
+  width: 38px; height: 38px; margin: -19px 0 0 -19px;
+  border: 2px solid var(--c-accent);
+  display: grid; place-items: center;
+  transition: width 320ms var(--ease-out-quint), height 320ms var(--ease-out-quint), margin 320ms var(--ease-out-quint),
+    background-color 250ms ease, border-color 250ms ease, opacity 200ms ease, scale 200ms var(--ease-out-quint);
+}
+.cur-ring span { font-size: 12px; font-weight: 800; letter-spacing: 0.02em; color: #fff; opacity: 0; transition: opacity 200ms ease; white-space: nowrap; }
+html.cur-on .cur-dot, html.cur-on .cur-ring { opacity: 1; }
+html.cur-link .cur-ring { width: 60px; height: 60px; margin: -30px 0 0 -30px; background: rgb(249 162 22 / 0.16); }
+html.cur-link .cur-dot { scale: 1.6; }
+html.cur-label .cur-ring { width: 86px; height: 86px; margin: -43px 0 0 -43px; background: var(--c-accent); border-color: var(--c-accent); }
+html.cur-label .cur-ring span { opacity: 1; }
+html.cur-label .cur-dot { opacity: 0; }
+html.cur-text .cur-dot, html.cur-text .cur-ring { opacity: 0; }
+html.cur-down .cur-ring { scale: 0.82; }
+
+/* Ranuras de los titulares que entran palabra por palabra (motion.ts). */
+.w { display: inline-block; overflow: clip; overflow-clip-margin: 0.1em; vertical-align: top; padding: 0 0.06em 0.14em; margin: 0 -0.06em -0.14em; }
+.wi { display: inline-block; transform-origin: 0 100%; }
 
 /* Entradas: el contenido se ve sin JavaScript; sólo se oculta cuando el script lo va a animar. */
 html.js [data-reveal] { opacity: 0; transform: translateY(24px); }

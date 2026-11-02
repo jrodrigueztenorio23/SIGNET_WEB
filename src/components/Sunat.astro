@@ -1,0 +1,244 @@
+---
+import { wa } from '../config/site';
+import { tono, type Tono } from '../config/modelos';
+
+interface Props { tone: Tono }
+const { tone } = Astro.props;
+
+// Bandeja de Notificaciones SUNAT de SIG Advanced, reproducida con datos ficticios.
+// La primera fila es la que "llega" cuando la sección entra en pantalla.
+type Fila = { dep: string; tipo: string; asunto: string; resp: string; estado: 'PENDIENTE' | 'EN REVISIÓN' | 'ATENDIDA'; critica?: boolean; noLeida?: boolean };
+const nueva: Fila = { dep: '01/11/2026 09:14', tipo: 'RESOLUCIONES DE COBRANZA', asunto: 'Resolución de ejecución coactiva N° 023-006-0415872', resp: '', estado: 'PENDIENTE', critica: true };
+const filas: Fila[] = [
+  { dep: '28/10/2026 10:21', tipo: 'ESQUELAS Y NOTIFICACIONES', asunto: 'Esquela de citación N° 230-2026-0088214', resp: '', estado: 'PENDIENTE', critica: true },
+  { dep: '24/10/2026 17:43', tipo: 'VALORES (ÓRDENES DE PAGO)', asunto: 'Orden de pago N° 023-001-0957413', resp: 'M. Quispe', estado: 'EN REVISIÓN', critica: true },
+  { dep: '21/10/2026 06:59', tipo: 'RESOLUCIONES DE INTENDENCIA', asunto: 'Resolución de intendencia N° 0230240118734', resp: '', estado: 'PENDIENTE', noLeida: true },
+  { dep: '15/10/2026 15:32', tipo: 'ESQUELAS Y NOTIFICACIONES', asunto: 'Comunicación de inicio de fiscalización parcial', resp: 'C. Rojas', estado: 'ATENDIDA' },
+  { dep: '09/10/2026 09:53', tipo: 'VALORES (ÓRDENES DE PAGO)', asunto: 'Orden de pago N° 023-001-0951206', resp: 'C. Rojas', estado: 'ATENDIDA' },
+];
+const chip = { PENDIENTE: 'bad', 'EN REVISIÓN': 'warn', ATENDIDA: 'ok' } as const;
+
+const puntos = [
+  { t: 'Buzón SOL y casilla SUNAFIL', d: 'Trae las notificaciones, los mensajes y sus adjuntos con la Clave SOL de la empresa, y guarda tu propio histórico.' },
+  { t: 'Lo crítico va primero', d: 'Cobranzas coactivas y esquelas con plazo arriba, marcadas en rojo, y un aviso al entrar al sistema mientras sigan sin atender.' },
+  { t: 'Cada una tiene responsable', d: 'Estado, responsable y comentario por notificación. Cada cambio queda en el historial con el usuario y la hora.' },
+  { t: 'Declaraciones y pagos', d: 'Lo declarado y pagado a SUNAT por periodo, con la constancia lista para descargar.' },
+];
+---
+
+<section id="sunat" class:list={['chapter', tono(tone)]} data-ink aria-labelledby="sunat-title">
+  <div class="wrap sunat-grid">
+    <div class="sunat-copy">
+      <h2 id="sunat-title" class="headline sunat-title" data-reveal>Que SUNAT no te tome <span class="it it-accent">por sorpresa</span></h2>
+      <p class="sunat-lead" data-reveal>
+        Las notificaciones del buzón electrónico llegan a SIG Advanced. Las críticas se marcan solas, se asignan a una
+        persona y no se cierran hasta que alguien las atiende.
+      </p>
+      <ul class="sunat-points">
+        {puntos.map((p) => (
+          <li data-reveal><b>{p.t}</b><span>{p.d}</span></li>
+        ))}
+      </ul>
+      <a class="btn" data-magnetic data-reveal href={wa('Hola, quiero ver las Notificaciones SUNAT de SIG Advanced.')} target="_blank" rel="noopener">
+        Quiero verlo en una demo
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 9h13M10 4l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+      </a>
+    </div>
+
+    <div class="sunat-stage" data-reveal data-cursor="Bandeja">
+      <div class="inbox-frame" data-ui>
+        <div class="inbox" role="img" aria-label="Pantalla de SIG Advanced: Bandeja de Notificaciones SUNAT, con las notificaciones críticas sin atender primero">
+          <p class="ib-crumb">Inicio / Contabilidad / <span>Bandeja de Notificaciones</span></p>
+          <div class="ib-card">
+            <div class="ib-head">
+              <span class="ib-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/></svg>Bandeja de Notificaciones</span>
+              <span class="ib-search">Buscar por asunto, tipo o dependencia</span>
+              <span class="ib-btn ib-excel">Excel</span>
+              <span class="ib-btn ib-sync" data-sync>Actualizar</span>
+            </div>
+            <div class="ib-kpis">
+              <span class="ib-kpi is-bad"><small>Críticas sin atender</small><b data-kpi="criticas" data-from="2" data-to="3">3</b></span>
+              <span class="ib-kpi"><small>No leídas</small><b data-kpi="noleidas" data-from="1" data-to="2">2</b></span>
+              <span class="ib-kpi"><small>Pendientes</small><b data-kpi="pendientes" data-from="3" data-to="4">4</b></span>
+              <span class="ib-kpi"><small>Última sincronización</small><b data-kpi="sync" data-from="31/10/2026 18:02" data-to="01/11/2026 09:15">01/11/2026 09:15</b></span>
+            </div>
+            <div class="ib-tabs">
+              <span class="is-on">Todas</span><span>Asignadas a mí (1)</span><span>No leídas (2)</span><span>Críticas (3)</span><span>Atendidas</span><span>Mensajes (4 sin leer)</span>
+            </div>
+            <div class="ib-table">
+              <div class="ib-row ib-th"><span></span><span>Depósito</span><span>Tipo</span><span>Asunto</span><span>Responsable</span><span>Estado</span></div>
+              {[nueva, ...filas].map((f, i) => (
+                <div class:list={['ib-row-wrap', { 'is-new': i === 0 }]}>
+                  <div class="ib-row">
+                    <span class:list={['ib-flag', { crit: f.critica, unread: f.noLeida }]}></span>
+                    <span>{f.dep}</span>
+                    <span class="ib-cut">{f.tipo}</span>
+                    <span class="ib-cut">{f.asunto}</span>
+                    <span>{f.resp}</span>
+                    <span><i class={`ib-chip ib-${chip[f.estado]}`}>{f.estado}</i></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ib-detail" data-ui aria-hidden="true">
+        <p class="ib-detail-title">Notificación SUNAT</p>
+        <p class="ib-alert"><b>!</b> Marcada como <strong>crítica</strong> y todavía sin atender.</p>
+        <dl>
+          <dt>Tipo</dt><dd>Resoluciones de cobranza</dd>
+          <dt>Dependencia</dt><dd>Intendencia Lima</dd>
+          <dt>Surte efecto</dt><dd>01/11/2026</dd>
+        </dl>
+        <p class="ib-field"><small>Responsable</small>M. Quispe · Contabilidad</p>
+        <p class="ib-field"><small>Comentario</small>Revisar con el estudio y pagar antes del viernes.</p>
+        <span class="ib-save">Guardar seguimiento</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sunat-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(2rem, 4vw, 4.5rem);
+    align-items: center;
+    padding-block: 8rem 6rem;
+  }
+  .sunat-title { font-size: clamp(2.75rem, 4.6vw, 4.75rem); max-width: 14ch; }
+  .sunat-lead { margin-top: 1.75rem; max-width: 34rem; font-size: 1.1875rem; color: var(--fg-2); }
+  .sunat-points { margin: 2.25rem 0 2.5rem; display: grid; gap: 1.25rem; max-width: 34rem; }
+  .sunat-points li { padding-left: 1.1rem; border-left: 3px solid var(--c-accent); }
+  .sunat-points b { display: block; font-size: 1.125rem; }
+  .sunat-points b { color: var(--head); }
+  .sunat-points span { display: block; color: var(--fg-2); font-size: 1rem; }
+
+  .sunat-stage { position: relative; padding-bottom: 12rem; }
+  .inbox-frame { container-type: inline-size; }
+  .inbox {
+    font-size: calc(100cqw / 60);
+    font-family: Roboto, 'Segoe UI', system-ui, sans-serif; /* taste-skill-ignore: tipografía de SIG */
+    font-stretch: 100%;
+    letter-spacing: 0;
+    line-height: 1.3;
+    background: #f5f7fa;
+    color: #1a2332;
+    padding: 1.2em 1.4em 1.6em;
+    border-radius: 10px;
+    box-shadow: var(--shadow); outline: 1px solid var(--line); /* taste-skill-ignore: pantalla del producto */
+    user-select: none;
+  }
+  .ib-crumb { font-size: 0.9em; margin-bottom: 0.9em; }
+  .ib-crumb span { color: #8a94a6; }
+  .ib-card { background: #fff; border-radius: 0.9em; padding: 1.3em; }
+  .ib-head { display: flex; align-items: center; gap: 0.9em; }
+  .ib-title { display: flex; align-items: center; gap: 0.5em; font-weight: 700; font-size: 1.15em; color: #002f5f; white-space: nowrap; }
+  .ib-title svg { width: 1.3em; fill: #004080; }
+  .ib-search { flex: 1; border: 0.07em solid #c5ccd6; border-radius: 0.3em; padding: 0.55em 0.9em; color: #8a94a6; font-size: 0.85em; white-space: nowrap; overflow: hidden; }
+  .ib-btn { color: #fff; font-weight: 700; font-size: 0.85em; padding: 0.7em 1.4em; border-radius: 0.4em; }
+  .ib-excel { background: #1e7e45; }
+  .ib-sync { background: #004080; }
+  .ib-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7em; margin-top: 1.2em; }
+  .ib-kpi { border: 0.07em solid #e2e8f0; border-radius: 0.6em; padding: 0.7em 0.9em; }
+  .ib-kpi small { display: block; font-size: 0.75em; color: #4a5568; }
+  .ib-kpi b { display: block; font-size: 1.25em; margin-top: 0.2em; font-variant-numeric: tabular-nums; }
+  .ib-kpi:last-child b { font-size: 0.95em; margin-top: 0.45em; }
+  .ib-kpi.is-bad b { color: #c62828; }
+  .ib-tabs { display: flex; gap: 1.6em; margin-top: 1.2em; border-bottom: 0.15em solid #f9a216; font-size: 0.8em; color: #4a5568; white-space: nowrap; overflow: hidden; }
+  .ib-tabs span { padding: 0.8em 0.2em; }
+  .ib-tabs .is-on { background: #004080; color: #fff; font-weight: 700; padding-inline: 1.6em; border-radius: 0.3em 0.3em 0 0; }
+
+  .ib-table { margin-top: 0.4em; font-size: 0.8em; }
+  .ib-row { display: grid; grid-template-columns: 2em 9.5em 13em 1fr 6.5em 7.5em; gap: 0.8em; align-items: center; padding: 0.85em 0.4em; border-bottom: 0.07em solid #e2e8f0; }
+  .ib-th { font-size: 0.85em; font-weight: 700; text-transform: uppercase; color: #4a5568; border-bottom: 0.2em solid #002f5f; }
+  .ib-cut { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ib-flag.crit::before { content: '!'; color: #c62828; font-weight: 900; font-size: 1.3em; padding-left: 0.3em; }
+  .ib-flag.unread::before { content: ''; display: block; width: 0.7em; height: 0.7em; margin-left: 0.2em; border-radius: 50%; background: #1d4ed8; }
+  .ib-chip { font-style: normal; font-weight: 700; font-size: 0.85em; padding: 0.2em 0.8em; border-radius: 1em; border: 0.1em solid; }
+  .ib-bad { color: #c62828; background: #fdecec; }
+  .ib-warn { color: #9a5b00; background: #fef3e2; }
+  .ib-ok { color: #116a37; background: #dcf3e5; }
+
+  /* La notificación que llega: entra plegada y se abre con un destello. Sin JavaScript se ve normal. */
+  .ib-row-wrap { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 700ms var(--ease-out-quint); }
+  .ib-row-wrap > .ib-row { min-height: 0; overflow: hidden; }
+  .ib-row-wrap.is-new > .ib-row { background: #fff4f4; }
+  :global(html.js) .ib-row-wrap.is-new:not(.in) { grid-template-rows: 0fr; }
+  .ib-row-wrap.is-new.in > .ib-row { animation: llega 2.4s ease-out 0.5s both; }
+  @keyframes llega { from { background: #ffd9d9; } to { background: #fff4f4; } }
+  .ib-sync.spin { background: #0b4c91; }
+
+  .ib-detail {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: min(21rem, 62%);
+    background: #fff;
+    color: #1a2332;
+    border-radius: 10px;
+    border-top: 4px solid #f9a216;
+    padding: 1rem 1.15rem 1.15rem;
+    font-family: Roboto, 'Segoe UI', system-ui, sans-serif; /* taste-skill-ignore: tipografía de SIG */
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.5); /* taste-skill-ignore: tarjeta flotante */
+  }
+  .ib-detail-title { font-weight: 700; font-size: 0.95rem; }
+  .ib-alert { margin-top: 0.6rem; background: #fdecec; color: #c62828; padding: 0.5rem 0.7rem; border-radius: 6px; }
+  .ib-alert b { margin-right: 0.35rem; }
+  .ib-detail dl { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.8rem; margin-top: 0.7rem; }
+  .ib-detail dt { color: #4a5568; }
+  .ib-detail dd { font-weight: 600; }
+  .ib-field { margin-top: 0.6rem; border: 1px solid #c5ccd6; border-radius: 5px; padding: 0.4rem 0.6rem; /* taste-skill-ignore: campo de SIG */ }
+  .ib-field small { display: block; font-size: 0.7rem; color: #4a5568; }
+  .ib-save { display: inline-block; margin-top: 0.8rem; background: #004080; color: #fff; font-weight: 700; padding: 0.5rem 0.9rem; border-radius: 5px; }
+
+  @media (max-width: 1023px) {
+    .sunat-grid { grid-template-columns: 1fr; padding-block: 6.5rem 4rem; }
+    .sunat-stage { padding-bottom: 0; }
+    .ib-detail { position: relative; right: auto; width: auto; max-width: 24rem; margin: -2.5rem 0 0 1rem; }
+  }
+  /* En el celular la bandeja se muestra con letra legible: sólo lo esencial de cada fila. */
+  @media (max-width: 599px) {
+    .inbox { font-size: calc(100cqw / 30); padding: 1em; }
+    .ib-crumb, .ib-search, .ib-excel, .ib-detail { display: none; }
+    .ib-card { padding: 1em; }
+    .ib-head { justify-content: space-between; }
+    .ib-kpis { grid-template-columns: repeat(2, 1fr); }
+    .ib-tabs span:nth-child(n + 4) { display: none; }
+    .ib-row { grid-template-columns: 1.2em 1fr 7.5em; gap: 0.6em; }
+    .ib-row > :nth-child(2), .ib-row > :nth-child(3), .ib-row > :nth-child(5) { display: none; }
+  }
+</style>
+
+<script>
+  // Cuando la bandeja entra en pantalla, "Actualizar" sincroniza y llega una notificación crítica nueva.
+  const nueva = document.querySelector<HTMLElement>('.ib-row-wrap.is-new');
+  const kpis = [...document.querySelectorAll<HTMLElement>('[data-kpi]')];
+  const sync = document.querySelector<HTMLElement>('[data-sync]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (nueva && !reduce) {
+    kpis.forEach((k) => (k.textContent = k.dataset.from!));
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      setTimeout(() => {
+        sync?.classList.add('spin');
+        sync && (sync.textContent = 'Actualizando…');
+      }, 700);
+      setTimeout(() => {
+        sync?.classList.remove('spin');
+        sync && (sync.textContent = 'Actualizar');
+        nueva.classList.add('in');
+        kpis.forEach((k) => (k.textContent = k.dataset.to!));
+      }, 1900);
+    }, { threshold: 0.55 });
+    io.observe(nueva.closest('.inbox')!);
+  } else {
+    nueva?.classList.add('in');
+  }
+</script>

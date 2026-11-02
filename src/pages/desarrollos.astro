@@ -1,0 +1,402 @@
+---
+// Página «Integraciones, agentes de IA y desarrollos a medida».
+// Los desarrollos listados existen en D:\ProyectoJR (SIGNET_PEDIDOSAPP, SIGNET_PUNTOVENTA, SIGNET_RINDEGASTOS,
+// SIGNET_PLANILLAAPP, SIGNET_MANTENIMIENTO, SIGNET_LOGISTICAIESA, SIGNET_PERSONALIZACIONES, SIGNET_API).
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { wa } from '../config/site';
+
+// Integraciones alrededor de SIG (centro del lienzo 600 × 600).
+const nodos = [
+  { t: 'SUNAT', s: 'Comprobantes y buzón SOL', a: -90 },
+  { t: 'Apps móviles', s: 'Sobre los mismos datos', a: -30 },
+  { t: 'WhatsApp', s: 'Avisos y consultas', a: 30 },
+  { t: 'Excel y BI', s: 'Reportes al día', a: 90 },
+  { t: 'Tu tienda online', s: 'Pedidos y stock', a: 150 },
+  { t: 'Otros sistemas', s: 'Por API, sin archivos', a: 210 },
+].map((n, i) => {
+  const r = 225;
+  const rad = (n.a * Math.PI) / 180;
+  return { ...n, i, x: 300 + Math.cos(rad) * r, y: 300 + Math.sin(rad) * r };
+});
+
+const agentePasos = [
+  'Leyendo cuentas por cobrar',
+  'Cruzando con los depósitos de Bancos',
+  'Agrupando por cliente y antigüedad',
+  'Armando el Excel',
+];
+
+const desarrollos = [
+  { t: 'App de pedidos', tipo: 'Móvil', d: 'La fuerza de ventas cotiza, toma pedidos, consulta stock y cuentas por cobrar desde el celular, y aprueba en el momento.', ic: 'M8 3h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm3 15h2' },
+  { t: 'Punto de venta', tipo: 'Tienda', d: 'Venta en mostrador con lector de códigos, cobranza y comprobantes, conectado al stock del ERP.', ic: 'M3 7h18v4H3zM5 11v9h14v-9M9 15h6M7 4h10l2 3H5l2-3Z' },
+  { t: 'Rendición de gastos', tipo: 'Móvil', d: 'El colaborador registra sus gastos con su comprobante y el aprobador los revisa según el flujo de la empresa.', ic: 'M6 3h12v18l-3-2-3 2-3-2-3 2V3Zm3 5h6M9 12h6' },
+  { t: 'App de planillas', tipo: 'Móvil y kiosco', d: 'Kiosco para el personal y aprobaciones desde el celular, sobre la planilla de SIG.', ic: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-6 9a6 6 0 0 1 12 0M17 8l2 2 3-3' },
+  { t: 'Mantenimiento de componentes', tipo: 'Web', d: 'Control de los componentes que salen a reparación y vuelven, para empresas con flota y equipos pesados.', ic: 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4 2.5-2.5Z' },
+  { t: 'Logística a medida', tipo: 'Web', d: 'Un sistema logístico hecho sobre el proceso real de un cliente, que reemplazó a su sistema anterior.', ic: 'M2 16V7h11v9M13 10h4l3 3v3h-7M6 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm11 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z' },
+  { t: 'Personalizaciones', tipo: 'Dentro de tu SIG', d: 'Los procesos propios de tu empresa viven dentro de tu SIG sin tocar el sistema base: se actualiza y lo tuyo sigue ahí.', ic: 'M4 6h10M4 12h16M4 18h7M17 4v4M14 18h6m-3-3v6' },
+];
+
+const proceso = [
+  { t: 'Conversamos', d: 'Entendemos tu proceso tal como funciona hoy, con la gente que lo usa.' },
+  { t: 'Proponemos', d: 'Alcance, tiempos y costo por escrito, antes de empezar.' },
+  { t: 'Construimos', d: 'Entregas parciales que pruebas con tus datos desde las primeras semanas.' },
+  { t: 'Acompañamos', d: 'Implementación, capacitación y el mismo soporte postventa de SIG.' },
+];
+
+const tipos = [
+  { id: 'integracion', t: 'Una integración', m: 'Hola, quiero integrar SIG Advanced con otro sistema.' },
+  { id: 'agente', t: 'Un agente de IA', m: 'Hola, me interesa un agente de IA para mi empresa.' },
+  { id: 'desarrollo', t: 'Un desarrollo a medida', m: 'Hola, necesito un desarrollo a medida.' },
+];
+---
+
+<Base
+  title="Integraciones, agentes de IA y desarrollos a medida | SIG Advanced"
+  description="Además de SIG Advanced, Lite Software & Consulting SAC integra sistemas, crea agentes de IA y desarrolla aplicaciones a medida conectadas a tu ERP."
+>
+  <Header />
+  <main>
+    <!-- Portada -->
+    <section id="inicio" class="chapter tone-dark dv-hero" data-ink aria-labelledby="dv-title">
+      <div class="wrap dv-hero-grid">
+        <div>
+          <h1 id="dv-title" class="headline dv-title" data-reveal>Lo que tu empresa necesita <span class="it it-accent">y ningún enlatado trae.</span></h1>
+          <p class="lead dv-lead" data-reveal>
+            Además de SIG Advanced, somos una casa de software: conectamos tus sistemas, creamos agentes de IA y
+            desarrollamos a medida, todo trabajando sobre los datos de tu ERP.
+          </p>
+          <ul class="dv-jump" data-reveal>
+            <li><a href="#integraciones">Integraciones</a></li>
+            <li><a href="#agentes">Agentes de IA</a></li>
+            <li><a href="#a-medida">Desarrollos a medida</a></li>
+          </ul>
+        </div>
+        <div class="orbit" aria-hidden="true" data-cursor="Hola">
+          <span class="orbit-ring r1"></span>
+          <span class="orbit-ring r2"></span>
+          <div class="orbit-spin">
+            <span class="sat s1"><svg viewBox="0 0 24 24"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13.5 6l-3 12" /></svg>API</span>
+            <span class="sat s2"><svg viewBox="0 0 24 24"><path d="M12 3v3M7 8h10a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-5a3 3 0 0 1 3-3Zm2 5h.01M15 13h.01M9.5 16h5" /></svg>IA</span>
+            <span class="sat s3"><svg viewBox="0 0 24 24"><path d="M8 3h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm3 15h2" /></svg>Apps</span>
+          </div>
+          <img class="orbit-mascot" src="/img/signet.webp" width="520" height="652" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Integraciones -->
+    <section id="integraciones" class="chapter tone-light" data-ink aria-labelledby="int-title">
+      <div class="wrap dv-split">
+        <div class="hub" data-ui data-reveal data-cursor="Conectado">
+          <svg viewBox="0 0 600 600" role="img" aria-label="SIG Advanced al centro, conectado con SUNAT, apps móviles, WhatsApp, Excel y BI, tu tienda online y otros sistemas.">
+            <circle class="hub-halo" cx="300" cy="300" r="225" />
+            {nodos.map((n) => (
+              <g class="link" style={`--i:${n.i}`}>
+                <line x1="300" y1="300" x2={n.x} y2={n.y} />
+                <line class="packet" x1="300" y1="300" x2={n.x} y2={n.y} />
+              </g>
+            ))}
+            <circle class="hub-core" cx="300" cy="300" r="74" />
+            <image href="/logo-sig.png" x="262" y="262" width="76" height="58" />
+            <text class="hub-name" x="300" y="345">SIG Advanced</text>
+            {nodos.map((n) => (
+              <g class="node" style={`--i:${n.i}`} transform={`translate(${n.x} ${n.y})`}>
+                <rect x="-74" y="-30" width="148" height="60" rx="16" />
+                <text class="node-t" x="0" y="-3">{n.t}</text>
+                <text class="node-s" x="0" y="15">{n.s}</text>
+              </g>
+            ))}
+          </svg>
+        </div>
+        <div>
+          <h2 id="int-title" class="headline dv-h2" data-reveal>Tus sistemas, <span class="it it-accent">conversando solos.</span></h2>
+          <p class="lead dv-p" data-reveal>
+            SIG Advanced tiene su propia API: tus otros sistemas leen y registran datos en el ERP de forma segura,
+            con usuario y permisos, sin exportar ni importar archivos a mano.
+          </p>
+          <ul class="dv-list" data-reveal>
+            <li><b>API REST con acceso por usuario.</b> Cada sistema entra con sus propias credenciales y sólo ve lo que le toca.</li>
+            <li><b>SUNAT ya viene conectado.</b> Comprobantes electrónicos, libros y el buzón SOL, desde el mismo ERP.</li>
+            <li><b>Lo que ya usas, conectado.</b> Tu tienda online, tus reportes en Excel o Power BI, o el sistema de un proveedor.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Agentes de IA -->
+    <section id="agentes" class="chapter tone-soft" data-ink aria-labelledby="ag-title">
+      <div class="wrap dv-split dv-split-rev">
+        <div>
+          <h2 id="ag-title" class="headline dv-h2" data-reveal>Agentes de IA que <span class="it it-accent">trabajan con tus datos.</span></h2>
+          <p class="lead dv-p" data-reveal>
+            Un agente recibe un encargo, revisa la información de tu empresa y te entrega el resultado: una respuesta,
+            un reporte o un aviso cuando algo necesita atención. Ya funciona en SIG Advanced con Consultas con IA.
+          </p>
+          <ul class="dv-list" data-reveal>
+            <li><b>Responde al equipo.</b> Ventas, cobranzas, stock o costos, preguntados en español.</li>
+            <li><b>Prepara lo repetitivo.</b> El reporte del cierre, el resumen de la semana, el Excel de siempre.</li>
+            <li><b>Avisa a tiempo.</b> Vencimientos, stock bajo o una notificación crítica, antes de que sea tarde.</li>
+            <li><b>Con límites claros.</b> Sólo lee si así lo decides, ve únicamente tu empresa y deja registro de cada acción.</li>
+          </ul>
+        </div>
+        <div class="agent" data-ui data-reveal data-cursor="Trabajando">
+          <div class="agent-head">
+            <span class="agent-dot"></span>
+            <b>Agente de cobranzas</b>
+            <small>Solo lectura</small>
+          </div>
+          <p class="agent-ask">«¿Qué clientes me deben más de 60 días?»</p>
+          <ol class="agent-steps">
+            {agentePasos.map((p, i) => (
+              <li style={`--i:${i}`}><span class="tick" aria-hidden="true"></span>{p}</li>
+            ))}
+          </ol>
+          <div class="agent-out">
+            <span class="xls">XLSX</span>
+            <span><b>Clientes con deuda vencida</b><small>7 clientes · S/ 33,614.60</small></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Desarrollos a medida -->
+    <section id="a-medida" class="chapter tone-light" data-ink aria-labelledby="md-title">
+      <div class="wrap dv-block">
+        <div class="dv-block-head">
+          <h2 id="md-title" class="headline dv-h2" data-reveal>Hecho a la medida <span class="it it-accent">de tu proceso.</span></h2>
+          <p class="lead dv-p" data-reveal>Algunos de los sistemas que hemos construido para nuestros clientes, conectados a su SIG.</p>
+        </div>
+        <ul class="builds">
+          {desarrollos.map((d, i) => (
+            <li class:list={['build', { 'build-wide': i === desarrollos.length - 1 }]} data-reveal>
+              <span class="build-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d={d.ic} /></svg></span>
+              <small>{d.tipo}</small>
+              <b>{d.t}</b>
+              <p>{d.d}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- Cómo trabajamos -->
+    <section id="proceso" class="chapter tone-tint dv-proc" data-ink aria-labelledby="pr-title">
+      <div class="wrap dv-block">
+        <h2 id="pr-title" class="headline dv-h2" data-reveal>Cómo <span class="it it-accent">trabajamos.</span></h2>
+        <ol class="proc">
+          {proceso.map((p, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <span class="proc-n">{i + 1}</span>
+              <b>{p.t}</b>
+              <p>{p.d}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="chapter tone-light dv-cta" data-ink aria-labelledby="ct-title">
+      <div class="wrap dv-cta-grid">
+        <img class="cta-mascot" src="/img/signet.webp" width="520" height="652" alt="SIGNET, el personaje de soporte de SIG Advanced" loading="lazy" />
+        <div>
+          <h2 id="ct-title" class="headline dv-h2" data-reveal>Cuéntanos <span class="it it-accent">qué necesitas.</span></h2>
+          <p class="lead dv-p" data-reveal>Elige el tipo de proyecto y escríbenos por WhatsApp. Te respondemos con las preguntas para armar la propuesta.</p>
+          <div class="kind" role="radiogroup" aria-label="Tipo de proyecto" data-reveal>
+            {tipos.map((t, i) => (
+              <label class="kind-opt">
+                <input type="radio" name="tipo" value={t.id} data-msg={t.m} checked={i === 0} />
+                <span>{t.t}</span>
+              </label>
+            ))}
+          </div>
+          <a id="dv-send" class="btn" data-magnetic href={wa(tipos[0].m)} target="_blank" rel="noopener" data-reveal>
+            Escribir por WhatsApp
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 9h13M10 4l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer tone="dark" />
+</Base>
+
+<style>
+  /* Portada */
+  .dv-hero { min-height: 100svh; display: flex; align-items: center; }
+  .dv-hero-grid { width: 100%; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 2rem 4rem; align-items: center; padding-block: 8rem 5rem; }
+  .dv-title { font-size: clamp(2.6rem, 5vw, 5.25rem); max-width: 15ch; }
+  .dv-lead { margin-top: 1.75rem; max-width: 36rem; }
+  .dv-jump { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 8px; }
+  .dv-jump a {
+    display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 1.1rem; border-radius: 999px;
+    background: var(--chip-2); color: var(--fg); font-weight: 650; transition: background-color 200ms ease, transform 160ms var(--ease-out-quint);
+  }
+  .dv-jump a:hover { background: var(--c-accent); color: var(--c-accent-ink); }
+  .dv-jump a:active { transform: scale(0.96); }
+
+  .orbit { position: relative; aspect-ratio: 1; width: min(100%, 30rem); margin-inline: auto; display: grid; place-items: center; }
+  .orbit-ring { position: absolute; border-radius: 50%; border: 2px dashed rgb(255 255 255 / 0.18); }
+  .r1 { inset: 4%; animation: gira 60s linear infinite; }
+  .r2 { inset: 20%; border-color: rgb(249 162 22 / 0.35); animation: gira 40s linear infinite reverse; }
+  .orbit-spin { position: absolute; inset: 4%; animation: gira 24s linear infinite; }
+  .sat {
+    position: absolute; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 0.9rem; border-radius: 999px;
+    background: #fff; color: var(--c-head); font-weight: 800; font-size: 0.9375rem; translate: -50% -50%;
+    animation: gira 24s linear infinite reverse;
+  }
+  .sat svg { width: 1.3rem; height: 1.3rem; fill: none; stroke: var(--c-accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .s1 { left: 50%; top: 0; }
+  .s2 { left: 93%; top: 75%; }
+  .s3 { left: 7%; top: 75%; }
+  .orbit-mascot { width: 52%; height: auto; position: relative; animation: flota 3.4s ease-in-out infinite; }
+  @keyframes gira { to { rotate: 360deg; } }
+  @keyframes flota { 50% { transform: translateY(-10px) rotate(-2deg); } }
+
+  /* Bloques */
+  .dv-split { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 2.5rem clamp(2rem, 5vw, 5rem); align-items: center; padding-block: 7rem 6rem; }
+  .dv-split-rev > :first-child { order: 0; }
+  .dv-h2 { font-size: clamp(2.3rem, 4vw, 4rem); max-width: 14ch; }
+  .dv-p { margin-top: 1.25rem; max-width: 34rem; }
+  .dv-list { margin-top: 1.75rem; display: grid; gap: 0.9rem; max-width: 34rem; }
+  .dv-list li { position: relative; padding-left: 1.4rem; color: var(--fg-2); font-size: 1.0625rem; }
+  .dv-list li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--c-accent); }
+  .dv-list b { color: var(--head); }
+
+  /* Hub de integraciones */
+  .hub svg { width: 100%; height: auto; overflow: visible; font-family: var(--font-sans); }
+  .hub-halo { fill: none; stroke: var(--c-blue-soft); stroke-width: 2; stroke-dasharray: 4 10; animation: gira 50s linear infinite; transform-origin: 300px 300px; }
+  .link line { stroke: var(--c-blue-soft); stroke-width: 3; }
+  .link .packet { stroke: var(--c-accent); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 10 300; animation: paquete 2.6s ease-in-out infinite; animation-delay: calc(var(--i) * -0.43s); }
+  .link:nth-child(even) .packet { animation-direction: reverse; }
+  @keyframes paquete { from { stroke-dashoffset: 10; } to { stroke-dashoffset: -235; } }
+  .hub-core { fill: var(--c-head); }
+  .hub-name { fill: #fff; font-size: 15px; font-weight: 800; text-anchor: middle; }
+  .node rect { fill: #fff; stroke: var(--c-blue-soft); stroke-width: 2; }
+  .node { animation: nodo 3.2s ease-in-out infinite; animation-delay: calc(var(--i) * -0.5s); }
+  @keyframes nodo { 50% { translate: 0 -5px; } }
+  .node-t { fill: var(--c-head); font-size: 16px; font-weight: 800; text-anchor: middle; }
+  .node-s { fill: var(--c-ink-2); font-size: 11.5px; text-anchor: middle; }
+
+  /* Agente */
+  .agent { background: #fff; color: var(--c-ink); border-radius: 24px; padding: 1.5rem; max-width: 30rem; justify-self: center; width: 100%; }
+  .agent-head { display: flex; align-items: center; gap: 0.6rem; }
+  .agent-head small { margin-left: auto; font-size: 0.8125rem; font-weight: 700; color: #116a37; background: #dcf3e5; padding: 0.2rem 0.7rem; border-radius: 1rem; }
+  .agent-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: #2f9d58; animation: late 1.6s ease-in-out infinite; }
+  @keyframes late { 50% { opacity: 0.35; } }
+  .agent-ask { margin-top: 1rem; padding: 0.8rem 1rem; border-radius: 14px; background: var(--c-head); color: #fff; font-weight: 600; }
+  .agent-steps { margin-top: 1rem; display: grid; gap: 0.6rem; }
+  .agent-steps li { display: flex; align-items: center; gap: 0.7rem; color: var(--c-ink-2); opacity: 0.4; transition: opacity 300ms ease, color 300ms ease; }
+  .tick { width: 1.4rem; height: 1.4rem; border-radius: 50%; flex: none; border: 2px solid var(--c-blue-soft); position: relative; transition: background-color 250ms ease, border-color 250ms ease, scale 300ms var(--ease-out-quint); }
+  .tick::after { content: ''; position: absolute; left: 0.38rem; top: 0.18rem; width: 0.35rem; height: 0.65rem; border: solid #fff; border-width: 0 2px 2px 0; rotate: 45deg; opacity: 0; transition: opacity 200ms ease; }
+  .agent-steps li.is-run { opacity: 1; color: var(--c-ink); }
+  .agent-steps li.is-run .tick { border-color: var(--c-accent); border-top-color: transparent; animation: gira 700ms linear infinite; }
+  .agent-steps li.is-done { opacity: 1; color: var(--c-ink); }
+  .agent-steps li.is-done .tick { background: #2f9d58; border-color: #2f9d58; scale: 1.08; }
+  .agent-steps li.is-done .tick::after { opacity: 1; }
+  .agent-out { margin-top: 1.1rem; display: flex; align-items: center; gap: 0.8rem; padding: 0.9rem 1rem; border-radius: 14px; background: var(--c-soft); opacity: 0; transform: translateY(10px); transition: opacity 400ms ease, transform 500ms var(--ease-out-quint); }
+  .agent.is-done .agent-out { opacity: 1; transform: none; }
+  .agent-out b { display: block; }
+  .agent-out small { color: var(--c-ink-2); }
+  .xls { flex: none; display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 10px; background: #1e7e45; color: #fff; font-weight: 800; font-size: 0.75rem; }
+
+  /* Desarrollos */
+  .dv-block { padding-block: 7rem 6rem; }
+  .dv-block-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem 3rem; }
+  .builds { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .build {
+    background: var(--card); border-radius: 22px; padding: 1.5rem; display: flex; flex-direction: column; gap: 0.35rem;
+    transition: transform 400ms var(--ease-out-quint), background-color 300ms ease;
+  }
+  .build:hover { transform: translateY(-6px); background: var(--c-blue-soft); }
+  .build-wide { grid-column: span 3; flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 1.25rem; }
+  .build-wide p { flex-basis: 100%; max-width: 60ch; }
+  .build-ic { width: 3.25rem; height: 3.25rem; border-radius: 16px; display: grid; place-items: center; background: #fff; color: var(--c-head); margin-bottom: 0.6rem; transition: background-color 300ms ease, color 300ms ease, rotate 500ms var(--ease-out-quint); }
+  .build:hover .build-ic { background: var(--c-accent); color: #fff; rotate: -8deg; }
+  .build-ic svg { width: 1.6rem; height: 1.6rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .build small { font-size: 0.8125rem; font-weight: 700; color: var(--c-accent); }
+  .build b { font-size: 1.3rem; color: var(--head); line-height: 1.15; }
+  .build p { color: var(--fg-2); font-size: 1rem; }
+
+  /* Proceso */
+  .dv-proc { min-height: 0; }
+  .proc { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; position: relative; }
+  .proc::before { content: ''; position: absolute; left: 1.5rem; right: 1.5rem; top: 1.5rem; height: 3px; border-radius: 3px; background: var(--c-blue-soft); }
+  .proc li { position: relative; }
+  .proc-n { width: 3rem; height: 3rem; border-radius: 50%; display: grid; place-items: center; background: var(--c-head); color: #fff; font-weight: 800; font-size: 1.125rem; margin-bottom: 1rem; position: relative; animation: pulso 4s ease-in-out infinite; animation-delay: calc(var(--i) * 1s); }
+  @keyframes pulso { 0%, 20%, 100% { background: var(--c-head); scale: 1; } 8% { background: var(--c-accent); scale: 1.12; } }
+  .proc b { display: block; font-size: 1.25rem; color: var(--head); }
+  .proc p { margin-top: 0.3rem; color: var(--fg-2); font-size: 1rem; max-width: 26ch; }
+
+  /* Contacto */
+  .dv-cta { min-height: 0; }
+  .dv-cta-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 2rem 4rem; align-items: center; padding-block: 6rem; }
+  .cta-mascot { width: min(100%, 18rem); height: auto; justify-self: center; animation: flota 3.4s ease-in-out infinite; }
+  .kind { margin: 1.75rem 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .kind-opt { position: relative; }
+  .kind-opt input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .kind-opt span { display: inline-flex; align-items: center; min-height: 2.875rem; padding: 0 1.15rem; border-radius: 999px; background: var(--chip); font-weight: 650; transition: background-color 200ms ease, color 200ms ease, transform 160ms var(--ease-out-quint); }
+  .kind-opt:hover span { background: var(--chip-2); }
+  .kind-opt input:checked + span { background: var(--strong); color: var(--strong-fg); }
+  .kind-opt input:focus-visible + span { outline: 3px solid var(--c-accent); outline-offset: 2px; }
+  .kind-opt:active span { transform: scale(0.96); }
+
+  @media (max-width: 1023px) {
+    .dv-hero-grid, .dv-split, .dv-cta-grid { grid-template-columns: 1fr; }
+    .dv-hero-grid { padding-block: 7rem 4rem; }
+    .orbit { width: min(100%, 22rem); }
+    .dv-split { padding-block: 5.5rem 4.5rem; }
+    .dv-split-rev .agent { order: 2; }
+    .builds { grid-template-columns: 1fr 1fr; }
+    .build-wide { grid-column: span 2; }
+    .proc { grid-template-columns: 1fr 1fr; row-gap: 2rem; }
+    .proc::before { display: none; }
+    .cta-mascot { width: 10rem; }
+  }
+  @media (max-width: 599px) {
+    .builds { grid-template-columns: 1fr; }
+    .build-wide { grid-column: auto; }
+    .proc { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .orbit-ring, .orbit-spin, .sat, .orbit-mascot, .hub-halo, .packet, .node, .agent-dot, .proc-n, .cta-mascot { animation: none !important; }
+  }
+</style>
+
+<script>
+  import '../scripts/motion';
+  import { wa } from '../config/site';
+
+  // El agente trabaja en bucle: cada paso gira, se marca y al final entrega el Excel.
+  const agente = document.querySelector<HTMLElement>('.agent');
+  const pasosAg = [...document.querySelectorAll<HTMLElement>('.agent-steps li')];
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (agente && quieto) {
+    pasosAg.forEach((p) => p.classList.add('is-done'));
+    agente.classList.add('is-done');
+  } else if (agente) {
+    const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    (async () => {
+      for (;;) {
+        pasosAg.forEach((p) => p.classList.remove('is-run', 'is-done'));
+        agente.classList.remove('is-done');
+        await espera(700);
+        for (const p of pasosAg) {
+          p.classList.add('is-run');
+          await espera(1000);
+          p.classList.replace('is-run', 'is-done');
+          await espera(150);
+        }
+        agente.classList.add('is-done');
+        await espera(3600);
+      }
+    })();
+  }
+
+  const send = document.getElementById('dv-send') as HTMLAnchorElement;
+  document.querySelectorAll<HTMLInputElement>('input[name="tipo"]').forEach((r) =>
+    r.addEventListener('change', () => { if (r.checked) send.href = wa(r.dataset.msg || ''); }),
+  );
+</script>

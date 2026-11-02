@@ -1,22 +1,27 @@
 ---
 import { empresa, mensajes, wa } from '../config/site';
 
+// En la portada los enlaces son anclas; desde otra página vuelven a la portada.
+const portada = Astro.url.pathname === '/' || Astro.url.pathname === '/index.html';
+const ir = (ancla: string) => (portada ? ancla : `/${ancla}`);
 const enlaces = [
-  { href: '#modulos', texto: 'Módulos' },
-  { href: '#clientes', texto: 'Clientes' },
-  { href: '#plan', texto: 'Plan' },
-  { href: '#nosotros', texto: 'Nosotros' },
+  { href: ir('#modulos'), texto: 'Módulos' },
+  { href: ir('#sunat'), texto: 'SUNAT' },
+  { href: ir('#ia'), texto: 'Consultas IA' },
+  { href: '/desarrollos', texto: 'Desarrollos' },
+  { href: ir('#nosotros'), texto: 'Nosotros' },
 ];
+const actual = (href: string) => href === Astro.url.pathname.replace(/\/$/, '');
 ---
 
 <header id="header" class="wrap fixed inset-x-0 top-0 z-50 flex h-18 items-center justify-between gap-6">
-  <a href="#inicio" class="flex items-center gap-3 font-bold tracking-tight" aria-label={`${empresa.producto}, ir al inicio`}>
+  <a href={portada ? '#inicio' : '/'} class="flex items-center gap-3 font-bold tracking-tight" aria-label={`${empresa.producto}, ir al inicio`}>
     <img src="/logo-sig.png" alt="" width="44" height="34" class="h-8.5 w-auto" />
     <span class="text-[1.0625rem]">{empresa.producto}</span>
   </a>
   <nav aria-label="Principal" class="hidden md:block">
-    <ul class="flex gap-8 text-[1rem] font-medium">
-      {enlaces.map((e) => <li><a class="link-underline" href={e.href}>{e.texto}</a></li>)}
+    <ul class="flex gap-7 text-[1rem] font-medium">
+      {enlaces.map((e) => <li><a class="link-underline" href={e.href} aria-current={actual(e.href) ? 'page' : undefined}>{e.texto}</a></li>)}
     </ul>
   </nav>
   <a class="btn btn-header" href={wa(mensajes.demo)} target="_blank" rel="noopener">
@@ -29,8 +34,24 @@ const enlaces = [
   #header {
     color: var(--header-ink);
     background: var(--header-bg, transparent);
-    transition: color 300ms ease, background-color 300ms ease;
+    box-shadow: 0 1px 0 var(--header-line, transparent); /* taste-skill-ignore: barra fija */
   }
+  /* Al bajar, el header se recoge en una cápsula centrada que flota sobre la página. */
+  #header {
+    transition: color 300ms ease, background-color 300ms ease, top 450ms var(--ease-out-quint),
+      left 450ms var(--ease-out-quint), right 450ms var(--ease-out-quint), height 450ms var(--ease-out-quint),
+      border-radius 450ms var(--ease-out-quint), padding 450ms var(--ease-out-quint), box-shadow 300ms ease;
+  }
+  #header:global(.is-float) {
+    top: 10px;
+    left: max(10px, calc(50% - 38rem));
+    right: max(10px, calc(50% - 38rem));
+    height: 3.75rem;
+    border-radius: 999px;
+    padding-inline: 1rem 0.4rem;
+    box-shadow: 0 0 0 1px var(--header-line, transparent), 0 14px 40px -18px rgb(19 41 74 / 0.45); /* taste-skill-ignore: barra flotante */
+  }
+  nav a[aria-current='page'] { text-decoration-color: var(--c-accent); text-underline-offset: 3px; }
   .btn-header {
     min-height: 2.75rem;
     padding: 0 1.125rem;

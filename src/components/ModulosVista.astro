@@ -1,0 +1,132 @@
+---
+// «Todo tu negocio, en un solo sistema»: los 12 módulos agrupados por área (opción B, elegida el 01/11/2026).
+// Al pasar el mouse (o con foco/toque) cada módulo se abre y muestra qué hace y algunas de sus pantallas.
+import { modulos } from '../config/site';
+import { iconos } from '../config/iconos';
+import { tono, type Tono } from '../config/modelos';
+
+interface Props { tone: Tono; id?: string }
+const { tone, id = 'cifras' } = Astro.props;
+
+// Frases cortas para leer de un vistazo.
+const corto: Record<string, string> = {
+  comercial: 'Cotiza, vende y factura a SUNAT',
+  contabilidad: 'Asientos, libros y PLE',
+  planillas: 'Personal, contratos y planilla',
+  compras: 'Requerimientos y órdenes de compra',
+  produccion: 'Órdenes, máquinas y costos',
+  configuracion: 'Productos, unidades y zonas',
+  almacen: 'Stock, guías y transferencias',
+  bancos: 'Pagos, caja chica y conciliación',
+  activos: 'Activos, movimientos y reparaciones',
+  crm: 'Pipeline y oportunidades',
+  seguridad: 'Usuarios, perfiles y auditoría',
+  dashboard: 'Indicadores en una sola vista',
+};
+const por = (ids: string[]) =>
+  ids.map((i) => {
+    const x = modulos.find((m) => m.id === i)!;
+    return { ...x, corto: corto[i], ic: iconos[i] };
+  });
+const areas = [
+  { t: 'Operación', mods: por(['comercial', 'compras', 'almacen', 'produccion']) },
+  { t: 'Finanzas', mods: por(['contabilidad', 'bancos', 'activos']) },
+  { t: 'Personas y clientes', mods: por(['planillas', 'crm']) },
+  { t: 'Control', mods: por(['configuracion', 'seguridad', 'dashboard']) },
+];
+---
+
+<section id={id} class:list={['chapter mv', tono(tone)]} data-ink aria-labelledby={`${id}-title`}>
+  <div class="wrap mv-wrap">
+    <div class="mv-head">
+      <h2 id={`${id}-title`} class="headline mv-title" data-reveal>Todo tu negocio, <span class="it it-accent">en un solo sistema.</span></h2>
+      <p class="lead mv-lead" data-reveal>Doce módulos que comparten los mismos datos: lo que registra un área, la otra ya lo tiene. Pasa el mouse o toca cada uno para ver qué hace.</p>
+    </div>
+
+    <div class="areas">
+      {areas.map((a) => (
+        <div class="area" data-reveal>
+          <p class="area-t it">{a.t}</p>
+          <ul>
+            {a.mods.map((x) => (
+              <li class="mod" tabindex="0">
+                <div class="mod-row">
+                  <span class={`mod-ic mov-${x.ic.mov}`} aria-hidden="true"><svg viewBox="0 0 24 24"><path d={x.ic.d} /></svg></span>
+                  <span class="mod-txt"><b>{x.nombre}</b><small>{x.corto}</small></span>
+                  <svg class="mod-more" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" /></svg>
+                </div>
+                <div class="mod-detail">
+                  <div>
+                    <p>{x.resumen}</p>
+                    <p class="mod-inc">Algunas pantallas</p>
+                    <ul class="mod-pantallas">
+                      {x.pantallas.map((p) => <li>{p}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .mv { min-height: 0; }
+  .mv-wrap { padding-block: 7rem 6rem; }
+  .mv-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem 3rem; }
+  .mv-title { font-size: clamp(2.4rem, 4.4vw, 4.5rem); max-width: 14ch; }
+  .mv-lead { max-width: 32rem; }
+
+  .areas { margin-top: 2.75rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; align-items: start; }
+  .area { background: var(--card); border-radius: 22px; padding: 1.5rem 1.1rem; }
+  .area-t { font-size: 1.75rem; color: var(--c-accent); margin: 0 0 1rem 0.5rem; }
+  .area > ul { display: grid; gap: 0.35rem; }
+
+  .mod { border-radius: 16px; outline: none; transition: background-color 250ms ease; }
+  .mod-row { display: flex; align-items: center; gap: 0.85rem; padding: 0.6rem; }
+  .mod-ic { width: 3.25rem; height: 3.25rem; flex: none; display: grid; place-items: center; border-radius: 50%; background: #fff; color: var(--c-head); transition: background-color 250ms ease, color 250ms ease, scale 400ms var(--ease-out-quint); }
+  .mod-ic svg { width: 56%; height: 56%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .mod-txt { flex: 1; min-width: 0; }
+  .mod b { display: block; font-size: 1.0625rem; color: var(--head); }
+  .mod small { display: block; font-size: 0.875rem; color: var(--fg-2); line-height: 1.35; }
+  .mod-more { width: 1rem; height: 1rem; flex: none; fill: none; stroke: var(--fg-2); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: rotate 300ms var(--ease-out-quint), stroke 250ms ease; }
+
+  /* Detalle: se abre al pasar el mouse, con foco o al tocarlo. */
+  .mod-detail { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 420ms var(--ease-out-quint); }
+  .mod-detail > div { overflow: hidden; padding: 0 0.85rem 0 4.7rem; opacity: 0; transition: opacity 250ms ease, padding 420ms var(--ease-out-quint); }
+  .mod-detail p { font-size: 0.9375rem; line-height: 1.45; color: var(--fg); }
+  .mod-inc { margin-top: 0.6rem; font-size: 0.8125rem !important; font-weight: 700; color: var(--c-accent) !important; }
+  .mod-pantallas { margin-top: 0.3rem; display: grid; gap: 0.25rem; }
+  .mod-pantallas li { position: relative; padding-left: 0.9rem; font-size: 0.875rem; color: var(--fg-2); }
+  .mod-pantallas li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.35rem; height: 0.35rem; border-radius: 50%; background: var(--c-head); }
+
+  .mod:hover, .mod:focus-visible, .mod:focus-within { background: var(--c-blue-soft); }
+  .mod:hover .mod-ic, .mod:focus-visible .mod-ic, .mod:focus-within .mod-ic { background: var(--c-accent); color: #fff; scale: 1.06; }
+  .mod:hover .mod-more, .mod:focus-visible .mod-more, .mod:focus-within .mod-more { rotate: 180deg; stroke: var(--c-accent); }
+  .mod:hover .mod-detail, .mod:focus-visible .mod-detail, .mod:focus-within .mod-detail { grid-template-rows: 1fr; }
+  .mod:hover .mod-detail > div, .mod:focus-visible .mod-detail > div, .mod:focus-within .mod-detail > div { opacity: 1; padding-bottom: 0.9rem; }
+  .mod:focus-visible { box-shadow: 0 0 0 3px var(--c-accent); /* taste-skill-ignore: foco de teclado */ }
+
+  .mov-bob svg { animation: m-bob 2.4s ease-in-out infinite; }
+  .mov-tilt svg { animation: m-tilt 2.8s ease-in-out infinite; }
+  .mov-roll svg { animation: m-roll 2.2s ease-in-out infinite; }
+  .mov-pulse svg { animation: m-pulse 2s ease-in-out infinite; }
+  .mov-spin svg { animation: m-spin 6s linear infinite; }
+  .mov-bars svg { animation: m-pulse 1.6s ease-in-out infinite; }
+  @keyframes m-bob { 50% { transform: translateY(-3px); } }
+  @keyframes m-tilt { 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+  @keyframes m-roll { 50% { transform: translateX(3px); } }
+  @keyframes m-pulse { 50% { transform: scale(1.14); } }
+  @keyframes m-spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 1023px) { .areas { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 599px) {
+    .mv-wrap { padding-block: 6rem 4rem; }
+    .areas { grid-template-columns: 1fr; }
+    .mv-lead { font-size: 1.0625rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .mv svg { animation: none !important; } }
+</style>

@@ -1,0 +1,260 @@
+---
+// «¿Qué puede hacer tu ERP?»: el visitante elige una pregunta y SIG le responde como en un chat,
+// con la pantalla real del módulo que lo resuelve.
+import { mensajes, wa } from '../config/site';
+import { pantallas } from '../config/screens';
+import { tono, type Tono } from '../config/modelos';
+import SigScreen from './SigScreen.astro';
+
+interface Props { tone: Tono }
+const { tone } = Astro.props;
+
+type Cap = { id: string; pregunta: string; corta: string; respuesta: string; modulo: string; pantalla?: string; ir?: string; claves: string[] };
+const caps: Cap[] = [
+  {
+    id: 'facturar', corta: 'Facturar a SUNAT', pregunta: '¿Puede facturar electrónicamente a SUNAT?', modulo: 'Comercial', pantalla: 'comercial',
+    respuesta: 'Sí. Desde Comercial emites facturas, boletas, notas y guías, y SUNAT las acepta al momento. La cotización, el pedido, el despacho y la cobranza quedan en el mismo flujo.',
+    claves: ['factur', 'boleta', 'sunat', 'venta', 'vender', 'cotiza', 'pedido', 'cobr', 'cliente'],
+  },
+  {
+    id: 'stock', corta: 'Saber mi stock', pregunta: '¿Me dice cuánto stock tengo?', modulo: 'Almacén', pantalla: 'almacen',
+    respuesta: 'Sí. Almacén lleva el stock de cada producto por almacén, con su costo promedio, entradas, salidas, transferencias y guías de remisión electrónicas.',
+    claves: ['stock', 'almacen', 'inventario', 'kardex', 'guia', 'producto', 'existencia'],
+  },
+  {
+    id: 'planilla', corta: 'Pagar la planilla', pregunta: '¿Calcula la planilla de mis trabajadores?', modulo: 'Planillas', pantalla: 'planillas',
+    respuesta: 'Sí. Registras trabajadores y contratos, SIG aplica los regímenes laborales y pensionarios del Perú y calcula la planilla de cada mes.',
+    claves: ['planilla', 'sueldo', 'trabajador', 'personal', 'empleado', 'rrhh', 'nomina', 'afp'],
+  },
+  {
+    id: 'compras', corta: 'Aprobar compras', pregunta: '¿Puedo aprobar las compras antes de hacerlas?', modulo: 'Compras', pantalla: 'compras',
+    respuesta: 'Sí. Los requerimientos se convierten en órdenes de compra y cada orden pasa por autorización, por niveles, antes de llegar al proveedor.',
+    claves: ['compra', 'proveedor', 'orden', 'requerimiento', 'aprob', 'autoriz'],
+  },
+  {
+    id: 'bancos', corta: 'Conciliar el banco', pregunta: '¿Concilia mis cuentas de banco?', modulo: 'Bancos', pantalla: 'bancos',
+    respuesta: 'Sí. Registras los movimientos de cada cuenta, la caja chica y los pagos a proveedores, y concilias el saldo del banco con el de tus libros.',
+    claves: ['banco', 'caja', 'pago', 'pagar', 'tesoreria', 'concilia'],
+  },
+  {
+    id: 'conta', corta: 'Llevar la contabilidad', pregunta: '¿Lleva la contabilidad y los libros electrónicos?', modulo: 'Contabilidad', pantalla: 'contabilidad',
+    respuesta: 'Sí. Ventas, compras y bancos generan sus asientos solos; tú revisas los libros oficiales, el PLE y el flujo de caja.',
+    claves: ['contab', 'libro', 'ple', 'asiento', 'balance', 'flujo', 'sire', 'pdt'],
+  },
+  {
+    id: 'produccion', corta: 'Costear la producción', pregunta: '¿Controla mi producción y sus costos?', modulo: 'Producción', pantalla: 'produccion',
+    respuesta: 'Sí. Planificas y lanzas órdenes de producción, asignas máquinas y operarios y distribuyes los costos de cada orden.',
+    claves: ['produc', 'fabric', 'maquina', 'operario', 'costo'],
+  },
+  {
+    id: 'notificaciones', corta: 'Vigilar a SUNAT', pregunta: '¿Me avisa si me llega una notificación de SUNAT?', modulo: 'Notificaciones SUNAT', ir: '#sunat',
+    respuesta: 'Sí. Trae las notificaciones del buzón SOL y de SUNAFIL, marca las críticas, las asigna a un responsable y te avisa al entrar mientras sigan sin atender.',
+    claves: ['notificac', 'buzon', 'sunafil', 'coactiva', 'esquela', 'multa', 'fiscaliz'],
+  },
+  {
+    id: 'ia', corta: 'Preguntarle en español', pregunta: '¿Le puedo preguntar cuánto vendí este mes?', modulo: 'Consultas con IA', ir: '#ia',
+    respuesta: 'Sí. Escribes la pregunta como se la harías a tu contador y te responde con un texto, una tabla, un Excel o un gráfico, sin cambiar nada en tus datos.',
+    claves: ['pregunt', 'inteligencia', 'reporte', 'grafico', 'excel', 'consulta'],
+  },
+];
+const datos = caps.map(({ id, claves }) => ({ id, claves }));
+---
+
+<section id="capacidades" class:list={['chapter', tono(tone)]} data-ink aria-labelledby="cap-title">
+  <div class="wrap cap-grid">
+    <div class="cap-side">
+      <h2 id="cap-title" class="headline cap-title" data-reveal>¿Qué puede hacer <span class="it it-accent">tu ERP?</span></h2>
+      <p class="lead cap-lead" data-reveal>Elige una pregunta y SIG Advanced te responde con la pantalla que lo resuelve.</p>
+      <div class="cap-list" role="group" aria-label="Preguntas" data-reveal>
+        {caps.map((c, i) => (
+          <button type="button" class="cap-q" data-cap={c.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+            <span class="cap-q-dot" aria-hidden="true"></span>{c.corta}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="chat" data-ui data-reveal>
+      <div class="chat-head">
+        <img src="/logo-sig.png" alt="" width="40" height="31" loading="lazy" />
+        <span><b>SIG Advanced</b><small>Responde al instante</small></span>
+      </div>
+
+      <div class="chat-body" aria-live="polite">
+        {caps.map((c, i) => (
+          <div class="turn" data-turn={c.id} hidden={i !== 0}>
+            <p class="bubble me">{c.pregunta}</p>
+            <div class="bubble sig">
+              <p class="sig-mod">{c.modulo}</p>
+              <p>{c.respuesta}</p>
+              {c.pantalla && (
+                <div class="sig-shot">
+                  <SigScreen p={pantallas.find((p) => p.id === c.pantalla)!} />
+                </div>
+              )}
+              <div class="sig-actions">
+                {c.pantalla
+                  ? <button type="button" class="sig-link" data-ver={c.pantalla}>Ver más pantallas de {c.modulo}</button>
+                  : <a class="sig-link" href={c.ir}>Ver {c.modulo}</a>}
+                <a class="sig-wa" href={wa(`Hola, quiero saber más de ${c.modulo} en SIG Advanced.`)} target="_blank" rel="noopener">Preguntar por WhatsApp</a>
+              </div>
+            </div>
+          </div>
+        ))}
+        <div class="turn" data-turn="otro" hidden>
+          <p class="bubble me" id="cap-otro-q"></p>
+          <div class="bubble sig">
+            <p>Esa te la respondemos mejor por WhatsApp: cuéntanos qué necesitas y te decimos cómo lo resuelve SIG Advanced.</p>
+            <div class="sig-actions">
+              <a class="sig-wa" id="cap-otro-wa" href={wa(mensajes.general)} target="_blank" rel="noopener">Escribir por WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form class="chat-input" id="cap-form">
+        <label class="sr-only" for="cap-input">Escribe tu propia pregunta</label>
+        <input id="cap-input" type="text" placeholder="Escribe tu propia pregunta…" autocomplete="off" />
+        <button type="submit" aria-label="Preguntar">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 20.5 21 12 3 3.5l.01 6.6L15 12 3.01 13.9 3 20.5Z"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="cap-data" set:html={JSON.stringify(datos)}></script>
+
+<style>
+  .cap-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+    padding-block: 7.5rem 6rem;
+  }
+  .cap-title { max-width: 11ch; }
+  .cap-lead { margin-top: 1.25rem; max-width: 30rem; }
+  .cap-list { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 8px; max-width: 34rem; }
+  .cap-q {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    min-height: 2.875rem; padding: 0 1.1rem;
+    border-radius: 999px;
+    background: var(--chip);
+    color: var(--fg);
+    font-size: 1rem; font-weight: 600;
+    transition: background-color 200ms ease, color 200ms ease, transform 160ms var(--ease-out-quint);
+  }
+  .cap-q:hover { background: var(--chip-2); }
+  .cap-q:active { transform: scale(0.96); }
+  .cap-q-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--c-accent); }
+  .cap-q[aria-pressed='true'] { background: var(--strong); color: var(--strong-fg); }
+
+  .chat {
+    background: var(--card);
+    color: var(--card-fg);
+    border-radius: 24px;
+    box-shadow: var(--shadow); /* taste-skill-ignore: ventana de chat del producto */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .chat-head { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; border-bottom: 1px solid rgb(26 35 50 / 0.08); /* taste-skill-ignore: interfaz de chat */ }
+  .chat-head img { width: 2.25rem; height: auto; }
+  .chat-head b { display: block; font-size: 1rem; }
+  .chat-head small { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8125rem; color: #2f8a4f; }
+  .chat-head small::before { content: ''; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #2f9d58; }
+  .chat-body { padding: 1.25rem; background: color-mix(in srgb, var(--c-blue-soft) 55%, #fff); min-height: 30rem; }
+  .turn { display: flex; flex-direction: column; gap: 0.75rem; }
+  .turn:not([hidden]) .bubble { animation: burbuja 520ms var(--ease-out-quint) both; }
+  .turn:not([hidden]) .bubble.sig { animation-delay: 260ms; }
+  @keyframes burbuja { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
+  .bubble { max-width: 88%; padding: 0.8rem 1rem; border-radius: 18px; font-size: 1rem; line-height: 1.45; }
+  .bubble.me { align-self: flex-end; background: var(--c-head); color: #fff; border-bottom-right-radius: 6px; font-weight: 600; }
+  .bubble.sig { align-self: flex-start; background: #fff; border-bottom-left-radius: 6px; box-shadow: 0 1px 2px rgb(16 24 40 / 0.06); /* taste-skill-ignore: burbuja de chat */ }
+  .sig-mod { font-size: 0.8125rem; font-weight: 700; color: var(--c-accent); margin-bottom: 0.2rem; }
+  .sig-shot { margin-top: 0.9rem; border-radius: 10px; overflow: hidden; outline: 1px solid #e2e8f0; }
+  .sig-actions { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin-top: 0.9rem; align-items: center; }
+  .sig-link { font-weight: 700; color: var(--c-head); text-decoration: underline; text-underline-offset: 4px; min-height: 2.5rem; }
+  .sig-wa {
+    display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0 1rem; border-radius: 999px;
+    background: #1f9d55; color: #fff; font-weight: 700; font-size: 0.9375rem;
+    transition: background-color 200ms ease;
+  }
+  .sig-wa:hover { background: #188a49; }
+
+  .chat-input { display: flex; gap: 0.5rem; padding: 0.75rem; border-top: 1px solid rgb(26 35 50 / 0.08); /* taste-skill-ignore: interfaz de chat */ }
+  .chat-input input {
+    flex: 1; min-width: 0; min-height: 3rem; padding: 0 1.1rem; border-radius: 999px;
+    background: var(--c-soft); font-size: 1rem; border: 2px solid transparent;
+  }
+  .chat-input input:focus { outline: none; border-color: var(--c-head); }
+  .chat-input button {
+    width: 3rem; height: 3rem; border-radius: 50%; display: grid; place-items: center;
+    background: var(--c-accent); color: var(--c-accent-ink);
+    transition: transform 160ms var(--ease-out-quint);
+  }
+  .chat-input button:active { transform: scale(0.92); }
+
+  @media (max-width: 1023px) {
+    .cap-grid { grid-template-columns: 1fr; padding-block: 6rem 4rem; }
+    .chat-body { min-height: 0; }
+  }
+  @media (max-width: 599px) {
+    .chat { border-radius: 18px; }
+    .chat-body { padding: 0.9rem; }
+    .bubble { max-width: 94%; }
+    .cap-list { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(var(--margin) * -1); padding-inline: var(--margin); scrollbar-width: none; }
+    .cap-q { flex: none; }
+  }
+</style>
+
+<script>
+  import { wa } from '../config/site';
+
+  type D = { id: string; claves: string[] };
+  const data: D[] = JSON.parse(document.getElementById('cap-data')!.textContent || '[]');
+  const botones = [...document.querySelectorAll<HTMLButtonElement>('.cap-q')];
+  const turnos = [...document.querySelectorAll<HTMLElement>('.turn')];
+  const form = document.getElementById('cap-form') as HTMLFormElement;
+  const input = document.getElementById('cap-input') as HTMLInputElement;
+  const otroQ = document.getElementById('cap-otro-q')!;
+  const otroWa = document.getElementById('cap-otro-wa') as HTMLAnchorElement;
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+  function mostrar(id: string) {
+    botones.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cap === id)));
+    turnos.forEach((t) => (t.hidden = t.dataset.turn !== id));
+  }
+
+  botones.forEach((b) => b.addEventListener('click', () => mostrar(b.dataset.cap!)));
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const texto = input.value.trim();
+    if (!texto) return;
+    const t = norm(texto);
+    let mejor = '';
+    let puntos = 0;
+    for (const d of data) {
+      const p = d.claves.reduce((s, c) => (t.includes(norm(c)) ? s + c.length : s), 0);
+      if (p > puntos) { puntos = p; mejor = d.id; }
+    }
+    if (mejor) {
+      mostrar(mejor);
+    } else {
+      otroQ.textContent = texto;
+      otroWa.href = wa(`Hola, quiero saber si SIG Advanced puede: ${texto}`);
+      mostrar('otro');
+    }
+    input.value = '';
+  });
+
+  // «Ver más pantallas» lleva al recorrido y abre ese módulo.
+  document.querySelectorAll<HTMLButtonElement>('[data-ver]').forEach((b) =>
+    b.addEventListener('click', () => {
+      document.getElementById('pantallas')?.scrollIntoView({ behavior: 'smooth' });
+      document.dispatchEvent(new CustomEvent('tour:module', { detail: b.dataset.ver }));
+    }),
+  );
+</script>

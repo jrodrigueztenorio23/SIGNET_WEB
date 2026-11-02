@@ -1,12 +1,16 @@
 ---
 import { pantallas } from '../config/screens';
 import SigScreen from './SigScreen.astro';
+import { tono, type Tono } from '../config/modelos';
+
+interface Props { tone: Tono }
+const { tone } = Astro.props;
 ---
 
-<section id="pantallas" class="chapter tour bg-sky text-ink" data-ink="#1a2332" aria-labelledby="tour-title">
+<section id="pantallas" class:list={['chapter tour', tono(tone)]} data-ink aria-labelledby="tour-title">
   <div class="tour-pin wrap">
     <div class="tour-side">
-      <h2 id="tour-title" class="title text-navy" data-reveal>Así se ve SIG Advanced</h2>
+      <h2 id="tour-title" class="headline tour-title" data-reveal>Así se ve <span class="it it-accent">por dentro</span></h2>
       <div class="tour-tabs" role="tablist" aria-label="Módulos" data-reveal>
         {pantallas.map((p, i) => (
           <button
@@ -18,13 +22,14 @@ import SigScreen from './SigScreen.astro';
             tabindex={i === 0 ? 0 : -1}
             class="tour-tab"
             data-index={i}
-          >{p.modulo}</button>
+          >{p.modulo}<span class="tour-time" aria-hidden="true"></span></button>
         ))}
       </div>
       <p class="tour-phrase" id="tour-phrase" aria-live="polite">{pantallas[0].frase}</p>
+      <button type="button" class="tour-play" id="tour-play" aria-pressed="false">Pausar el recorrido</button>
     </div>
 
-    <div class="tour-screens" data-reveal>
+    <div class="tour-screens" data-reveal data-cursor="Mira">
       {pantallas.map((p, i) => (
         <div
           class:list={['tour-panel', { 'is-active': i === 0 }]}
@@ -56,13 +61,20 @@ import SigScreen from './SigScreen.astro';
     letter-spacing: -0.015em;
     line-height: 1.15;
     padding: 0.3rem 0 0.3rem 1rem;
-    color: #7a879b;
+    color: var(--fg-2);
     border-left: 4px solid transparent;
     transition: color 220ms ease, border-color 220ms ease, transform 300ms var(--ease-out-quint);
     text-align: left;
   }
-  .tour-tab:hover { color: var(--color-navy); }
-  .tour-tab[aria-selected='true'] { color: var(--color-navy); border-left-color: var(--color-orange); transform: translateX(6px); }
+  .tour-tab:hover { color: var(--head); }
+  .tour-title { font-size: clamp(2.5rem, 4.4vw, 4.25rem); max-width: 9ch; }
+  .tour-tab[aria-selected='true'] { color: var(--head); border-left-color: var(--c-accent); transform: translateX(6px); }
+  .tour-tab { position: relative; }
+  .tour-time { position: absolute; left: -4px; top: 0; width: 4px; height: 100%; background: var(--c-head); transform: scaleY(0); transform-origin: top; }
+  .tour-tab[aria-selected='true'] .tour-time { animation: tiempo var(--tour-ms, 4500ms) linear both; }
+  :global(.tour.is-paused) .tour-time { animation-play-state: paused !important; }
+  @keyframes tiempo { to { transform: scaleY(1); } }
+  .tour-play { margin-top: 1rem; min-height: 2.75rem; padding: 0 1rem; border-radius: 999px; background: var(--chip); color: var(--head); font-weight: 700; font-size: 0.875rem; }
   .tour-phrase { margin-top: 1.75rem; max-width: 26ch; font-size: 1.125rem; min-height: 3.4em; }
 
   .tour-screens { position: relative; aspect-ratio: 16 / 10; }
@@ -80,7 +92,7 @@ import SigScreen from './SigScreen.astro';
     transform: none;
     transition: opacity 420ms ease, transform 600ms var(--ease-out-quint), visibility 0s;
   }
-  .tour-panel :global(.sig) { border-radius: 10px; box-shadow: 0 30px 70px -30px rgb(0 47 95 / 0.45); /* taste-skill-ignore: pantalla del producto */ }
+  .tour-panel :global(.sig) { border-radius: 10px; box-shadow: var(--shadow); /* taste-skill-ignore: pantalla del producto */ }
 
   @media (max-width: 1023px) {
     .tour-pin { grid-template-columns: 1fr; min-height: 0; padding-block: 6rem 4rem; gap: 1.5rem; }
@@ -98,12 +110,15 @@ import SigScreen from './SigScreen.astro';
       font-size: 1rem;
       padding: 0 1rem;
       min-height: 2.75rem;
-      background: var(--color-paper);
+      background: var(--chip);
       border-left: 0;
-      color: var(--color-ink);
+      border-radius: 999px;
+      color: var(--fg);
     }
-    .tour-tab[aria-selected='true'] { background: var(--color-navy); color: var(--color-paper); transform: none; }
+    .tour-tab[aria-selected='true'] { background: var(--strong); color: var(--strong-fg); transform: none; }
     .tour-phrase { margin-top: 1rem; min-height: 0; }
+    .tour-time { left: 0; top: auto; bottom: 0; width: 100%; height: 3px; transform: scaleX(0); transform-origin: left; }
+    @keyframes tiempo { to { transform: scaleX(1); } }
   }
 </style>
 
@@ -123,13 +138,45 @@ import SigScreen from './SigScreen.astro';
     panels.forEach((p, k) => p.classList.toggle('is-active', k === i));
     phrase.textContent = panels[i].dataset.phrase || '';
     if (foco) tabs[i].focus();
-    tabs[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    // Sólo desplaza la fila de pestañas (en celular), nunca la página.
+    const lista = tabs[i].parentElement!;
+    if (lista.scrollWidth > lista.clientWidth) lista.scrollTo({ left: tabs[i].offsetLeft - lista.offsetLeft - 16, behavior: 'smooth' });
   }
+
+  // Recorrido automático: cambia de módulo cada 4,5 s mientras está a la vista. Se detiene con el botón.
+  const MS = 4500;
+  const seccion = document.getElementById('pantallas')!;
+  const play = document.getElementById('tour-play') as HTMLButtonElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let visible = false;
+  let pausado = reduce;
+  let reloj = 0;
+  seccion.style.setProperty('--tour-ms', `${MS}ms`);
+
+  function programar() {
+    clearTimeout(reloj);
+    const quieto = !visible || pausado;
+    seccion.classList.toggle('is-paused', quieto);
+    if (!quieto) reloj = window.setTimeout(() => { mostrar((actual + 1) % tabs.length); programar(); }, MS);
+  }
+  function reiniciarBarra() {
+    const t = tabs[actual].querySelector<HTMLElement>('.tour-time');
+    if (t) { t.style.animation = 'none'; void t.offsetWidth; t.style.animation = ''; }
+  }
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; programar(); }, { threshold: 0.35 }).observe(seccion);
+  play.addEventListener('click', () => {
+    pausado = !pausado;
+    play.setAttribute('aria-pressed', String(pausado));
+    play.textContent = pausado ? 'Reanudar el recorrido' : 'Pausar el recorrido';
+    programar();
+  });
+  if (reduce) { play.hidden = true; }
 
   tabs.forEach((t, i) => {
     t.addEventListener('click', () => {
-      document.dispatchEvent(new CustomEvent('tour:pick', { detail: i }));
       mostrar(i);
+      reiniciarBarra();
+      programar();
     });
     t.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); mostrar((i + 1) % tabs.length, true); }
@@ -137,11 +184,9 @@ import SigScreen from './SigScreen.astro';
     });
   });
 
-  // El scroll fijado (motion.ts) avisa qué módulo toca mostrar.
-  document.addEventListener('tour:step', (e) => mostrar((e as CustomEvent<number>).detail));
   // El buscador de necesidades puede pedir un módulo por su id.
   document.addEventListener('tour:module', (e) => {
     const i = panels.findIndex((p) => p.id === `panel-${(e as CustomEvent<string>).detail}`);
-    if (i >= 0) { document.dispatchEvent(new CustomEvent('tour:pick', { detail: i })); mostrar(i); }
+    if (i >= 0) { mostrar(i); reiniciarBarra(); programar(); }
   });
 </script>

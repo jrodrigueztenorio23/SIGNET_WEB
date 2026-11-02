@@ -1,49 +1,50 @@
 ---
 import { clientes } from '../config/site';
+import { tono, type Tono } from '../config/modelos';
+
+interface Props { tone: Tono }
+const { tone } = Astro.props;
 ---
 
-<section id="clientes" class="chapter bg-mist text-ink flex items-center" data-ink="#1a2332" aria-labelledby="clientes-title">
+<section id="clientes" class:list={['chapter flex items-center', tono(tone)]} data-ink aria-labelledby="clientes-title">
   <div class="wrap w-full py-28">
-    <ul class="proof">
-      <li class="proof-head bg-navy text-paper">
-        <h2 id="clientes-title" class="proof-title">Empresas que ya trabajan con SIG</h2>
-      </li>
-      {clientes.map((c) => (
-        <li class="proof-tile" data-reveal><span>{c}</span></li>
+    <div class="proof-head">
+      <h2 id="clientes-title" class="headline proof-title" data-reveal>Empresas que <span class="it it-accent">confían</span> en SIG</h2>
+      <p class="lead proof-lead" data-reveal>Algunas de las empresas que gestionan su día a día con SIG.</p>
+    </div>
+    <ul class="logos">
+      {clientes.map((c, i) => (
+        <li class="logo" data-reveal style={`--i:${i}`}>
+          <img src={c.logo} alt={c.nombre} width="320" height="320" loading="lazy" decoding="async" />
+        </li>
       ))}
     </ul>
   </div>
 </section>
 
 <style>
-  .proof {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+  .proof-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem 3rem; margin-bottom: 2.5rem; }
+  .proof-title { font-size: clamp(2.2rem, 3.8vw, 3.75rem); max-width: 13ch; }
+  .proof-lead { max-width: 30rem; }
+  .logos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .logo {
+    aspect-ratio: 1;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #fff;
+    transition: transform 400ms var(--ease-out-quint), box-shadow 400ms ease;
+    animation: respira 6s ease-in-out calc(var(--i) * -0.6s) infinite;
   }
-  .proof-head { grid-column: span 2; padding: 24px; aspect-ratio: 3 / 1; display: flex; }
-  .proof-title {
-    font-size: clamp(2rem, 3.4vw, 3.25rem);
-    font-weight: 800;
-    line-height: 0.98;
-    letter-spacing: -0.03em;
-    max-width: 14ch;
-  }
-  .proof-tile {
-    aspect-ratio: 3 / 2;
-    background: var(--color-paper);
-    color: var(--color-navy);
-    padding: 24px;
-  }
-  .proof-tile span {
-    font-size: clamp(1.25rem, 2.1vw, 2rem);
-    font-weight: 780;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
-  }
+  .logo img { width: 100%; height: 100%; object-fit: contain; transition: transform 500ms var(--ease-out-quint); }
+  .logo:hover { transform: translateY(-6px); box-shadow: 0 24px 40px -24px rgb(19 41 74 / 0.45); /* taste-skill-ignore: tarjeta levantada al pasar el mouse */ }
+  .logo:hover img { transform: scale(1.05); }
+  @keyframes respira { 50% { translate: 0 -4px; } }
   @media (max-width: 767px) {
-    .proof { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    .proof-head { grid-column: span 2; aspect-ratio: auto; min-height: 120px; }
-    .proof-tile { padding: 18px; }
+    .logos { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .logo { border-radius: 16px; }
   }
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .logos { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { .logo { animation: none; } }
 </style>

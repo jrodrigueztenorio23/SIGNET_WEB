@@ -1,0 +1,440 @@
+---
+// «Registras una vez. SIG hace el resto.»: una planta isométrica que se mueve sola. Los documentos
+// avanzan por la banda de estación en estación y los trabajadores son SIGNET, el personaje de soporte.
+// El documento con borde naranja marca el paso activo de la lista. Dibujado en SVG desde cero.
+import { mensajes, wa } from '../config/site';
+import { tono, type Tono } from '../config/modelos';
+
+interface Props { tone: Tono }
+const { tone } = Astro.props;
+
+// Proyección isométrica: +x baja a la derecha, +y baja a la izquierda, z sube.
+const U = 54;
+const C = Math.cos(Math.PI / 6) * U;
+const S = 0.5 * U;
+const OX = 330;
+const OY = 150;
+type Pt = [number, number];
+const P = (x: number, y: number, z = 0): Pt => [OX + (x - y) * C, OY + (x + y) * S - z * U];
+const pts = (a: Pt[]) => a.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+
+type Caja = { top: string; izq: string; der: string };
+function caja(x: number, y: number, z: number, w: number, d: number, h: number): Caja {
+  return {
+    top: pts([P(x, y, z + h), P(x + w, y, z + h), P(x + w, y + d, z + h), P(x, y + d, z + h)]),
+    izq: pts([P(x, y + d, z), P(x + w, y + d, z), P(x + w, y + d, z + h), P(x, y + d, z + h)]),
+    der: pts([P(x + w, y, z), P(x + w, y + d, z), P(x + w, y + d, z + h), P(x + w, y, z + h)]),
+  };
+}
+
+// Banda: tres tramos en zigzag.
+const ALTO = 0.5;
+const banda = [
+  caja(-0.4, -0.45, 0, 7.85, 0.9, ALTO),
+  caja(6.55, -5.45, 0, 0.9, 5.45, ALTO),
+  caja(7.45, -5.45, 0, 5.6, 0.9, ALTO),
+];
+const rodillos = [
+  ...Array.from({ length: 9 }, (_, i) => P(-0.1 + i * 0.85, 0.45, 0.25)),
+  ...Array.from({ length: 7 }, (_, i) => P(7.45 + i * 0.85, -4.55, 0.25)),
+];
+// Recorrido de los documentos sobre la banda (centro de la cara superior).
+const recorrido = [P(-0.2, 0, ALTO), P(7, 0, ALTO), P(7, -5, ALTO), P(13.2, -5, ALTO)];
+const camino = `M ${recorrido.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(' L ')}`;
+const largo = 7.2 + 5 + 6.2;
+
+// Documento: una pila de hojas en el origen; CSS lo mueve por el camino.
+const doc = (() => {
+  const o = P(0, 0, 0);
+  const rel = (x: number, y: number, z: number): Pt => { const [a, b] = P(x, y, z); return [a - o[0], b - o[1]]; };
+  const w = 0.5, d = 0.36, h = 0.16, x = -w / 2, y = -d / 2;
+  return {
+    top: pts([rel(x, y, h), rel(x + w, y, h), rel(x + w, y + d, h), rel(x, y + d, h)]),
+    izq: pts([rel(x, y + d, 0), rel(x + w, y + d, 0), rel(x + w, y + d, h), rel(x, y + d, h)]),
+    der: pts([rel(x + w, y, 0), rel(x + w, y + d, 0), rel(x + w, y + d, h), rel(x + w, y, h)]),
+    linea: pts([rel(x + 0.1, y + 0.1, h), rel(x + 0.38, y + 0.1, h)]),
+  };
+})();
+
+// Estaciones, en el orden en que el documento las cruza (d = distancia sobre la banda).
+const estaciones = [
+  { id: 'cot', n: 1, nombre: 'Cotización', d: 1.9, tag: P(2.1, -1.4, 2.7) },
+  { id: 'alm', n: 2, nombre: 'Almacén', d: 5, tag: P(4.9, -2.2, 2.35) },
+  { id: 'fac', n: 3, nombre: 'Factura SUNAT', d: 7.2 + 2.6, tag: P(7, -2.6, 2.45) },
+  { id: 'ban', n: 4, nombre: 'Bancos', d: 7.2 + 5 + 1.6, tag: P(8.9, -6.9, 2.1) },
+  { id: 'con', n: 5, nombre: 'Contabilidad', d: 7.2 + 5 + 3.6, tag: P(10.2, -2.6, 1.15) },
+  { id: 'rep', n: 6, nombre: 'Reportes e IA', d: largo - 1.2, tag: P(14.6, -6.6, 2.4) },
+];
+
+// Piezas de cada estación.
+const pizarra = pts([P(0.9, -1.5, 0.3), P(3.3, -1.5, 0.3), P(3.3, -1.5, 2.3), P(0.9, -1.5, 2.3)]);
+const pizarraLineas = [0, 1, 2, 3].map((k) => pts([P(1.2, -1.5, 1.95 - k * 0.38), P(k === 3 ? 2.2 : 3, -1.5, 1.95 - k * 0.38)]));
+const patasPizarra = [caja(1.05, -1.6, 0, 0.12, 0.12, 0.35), caja(3.05, -1.6, 0, 0.12, 0.12, 0.35)];
+const estante = caja(4.1, -2.9, 0, 1.6, 1.1, 1.55);
+const estanteCajas = [caja(4.25, -2.75, 1.55, 0.5, 0.45, 0.4), caja(4.95, -2.75, 1.55, 0.5, 0.45, 0.4), caja(4.6, -2.25, 1.55, 0.5, 0.4, 0.32)];
+const estanteRepisas = [0.45, 0.95].map((z) => pts([P(4.1, -1.8, z), P(5.7, -1.8, z)]));
+const arcoIzq = caja(6.1, -2.9, 0, 0.3, 0.3, 1.7);
+const arcoDer = caja(7.6, -2.9, 0, 0.3, 0.3, 1.7);
+const arcoViga = caja(6.1, -2.9, 1.7, 1.8, 0.3, 0.32);
+const luz = P(7.05, -2.75, 2.02);
+const boveda = caja(8.2, -7.4, 0, 1.4, 1.3, 1.3);
+const bovedaPuerta = P(8.9, -6.1, 0.65);
+const escritorio = caja(10.1, -3.85, 0, 1.3, 0.7, 0.7);
+const pantalla = pts([P(10.35, -3.6, 0.75), P(11.15, -3.6, 0.75), P(11.15, -3.6, 1.35), P(10.35, -3.6, 1.35)]);
+const nube = P(13.6, -5.2, 0.9);
+const suelo = pts([P(-1.2, -1.8, 0), P(8.6, -1.8, 0), P(8.6, -6.6, 0), P(14.6, -6.6, 0), P(14.6, -3.4, 0), P(8.6, -3.4, 0), P(8.6, 1.9, 0), P(-1.2, 1.9, 0)]);
+
+// Los trabajadores: SIGNET (520 × 652), parados en el punto de sus pies.
+const trabajadores = [
+  { pie: P(2.6, 1.55, 0), h: 118, est: 'cot', dice: 'Cotización aprobada' },
+  { pie: P(5.4, 1.45, 0), h: 112, est: 'alm', dice: 'Guía emitida' },
+  { pie: P(8.35, -1.1, 0), h: 108, est: 'fac', dice: 'Aceptada por SUNAT' },
+  { pie: P(9.95, -6.3, 0), h: 96, est: 'ban', dice: 'Depósito conciliado' },
+  { pie: P(11.9, -3.1, 0), h: 106, est: 'con', dice: 'Asiento cuadrado' },
+  { pie: P(14.3, -3.5, 0), h: 104, est: 'rep', dice: 'Todo al día' },
+];
+
+const pasos = [
+  { t: 'Cotizas', d: 'Armas la cotización y, cuando el cliente la aprueba, se vuelve pedido sin digitar de nuevo.' },
+  { t: 'Despachas', d: 'Almacén descuenta el stock y emite la guía de remisión electrónica.' },
+  { t: 'Facturas', d: 'La factura sale del mismo pedido y SUNAT la acepta al momento.' },
+  { t: 'Cobras', d: 'Cuando llega el depósito, Bancos lo concilia contra la factura.' },
+  { t: 'Se contabiliza solo', d: 'Cada paso dejó su asiento: Contabilidad cuadra sin volver a digitar.' },
+  { t: 'Decides', d: 'Reportes y Consultas con IA te dicen cómo va tu empresa, al día.' },
+];
+
+const CICLO = 14; // segundos que tarda un documento en recorrer la planta
+const fracciones = estaciones.map((e) => e.d / largo);
+---
+
+<section id="flujo" class:list={['chapter flow', tono(tone)]} data-ink aria-labelledby="flujo-title">
+  <div class="wrap flow-wrap">
+    <div class="flow-head">
+      <h2 id="flujo-title" class="headline flow-title" data-reveal>Registras una vez. <span class="it it-accent">SIG hace el resto.</span></h2>
+      <p class="lead flow-lead" data-reveal>Así viaja un pedido por la planta de SIG Advanced: cada área recibe lo que necesita y nadie vuelve a digitar.</p>
+    </div>
+
+    <div class="flow-grid">
+      <div class="plant" data-ui data-reveal data-cursor="En vivo">
+        <svg viewBox="165 -40 1175 520" role="img" aria-labelledby="plant-desc" style={`--ciclo:${CICLO}s`}>
+          <desc id="plant-desc">Ilustración animada: un pedido avanza por una banda transportadora que pasa por Cotización, Almacén, Factura SUNAT, Bancos, Contabilidad y termina en la nube con Reportes e IA. En cada estación trabaja SIGNET, el personaje de soporte.</desc>
+
+          <polygon class="floor" points={suelo} />
+
+          <!-- Estaciones detrás de la banda -->
+          <g class="station" data-st="cot">
+            {patasPizarra.map((c) => <><polygon class="f-izq" points={c.izq} /><polygon class="f-der" points={c.der} /></>)}
+            <polygon class="board" points={pizarra} />
+            {pizarraLineas.map((l) => <polyline class="board-line" points={l} />)}
+          </g>
+          <g class="station" data-st="alm">
+            <polygon class="m-top" points={estante.top} /><polygon class="m-izq" points={estante.izq} /><polygon class="m-der" points={estante.der} />
+            {estanteRepisas.map((r) => <polyline class="shelf" points={r} />)}
+            {estanteCajas.map((c) => <><polygon class="k-top" points={c.top} /><polygon class="k-izq" points={c.izq} /><polygon class="k-der" points={c.der} /></>)}
+          </g>
+          <g class="station" data-st="ban">
+            <polygon class="m-top" points={boveda.top} /><polygon class="m-izq" points={boveda.izq} /><polygon class="m-der" points={boveda.der} />
+            <circle class="vault" cx={bovedaPuerta[0]} cy={bovedaPuerta[1]} r="15" />
+            <path class="vault-spin" d={`M ${bovedaPuerta[0] - 9} ${bovedaPuerta[1]} H ${bovedaPuerta[0] + 9} M ${bovedaPuerta[0]} ${bovedaPuerta[1] - 9} V ${bovedaPuerta[1] + 9}`} />
+          </g>
+
+          <!-- Banda -->
+          {banda.map((b) => <><polygon class="b-izq" points={b.izq} /><polygon class="b-der" points={b.der} /><polygon class="b-top" points={b.top} /></>)}
+          <path class="belt-run" d={camino} />
+          {rodillos.map(([x, y]) => <circle class="roller" cx={x} cy={y} r="4" />)}
+
+          <!-- Arco de SUNAT: pilar trasero, documentos, pilar delantero y viga -->
+          <g class="station" data-st="fac">
+            <polygon class="m-top" points={arcoIzq.top} /><polygon class="m-izq" points={arcoIzq.izq} /><polygon class="m-der" points={arcoIzq.der} />
+          </g>
+
+          <!-- Documentos en camino -->
+          <g class="docs">
+            {[0, 1, 2, 3].map((k) => (
+              <g class:list={['doc', { 'doc-lead': k === 0 }]} style={`offset-path: path('${camino}'); animation-delay: ${-(k * CICLO) / 4}s`}>
+                <polygon class="d-izq" points={doc.izq} /><polygon class="d-der" points={doc.der} /><polygon class="d-top" points={doc.top} />
+                <polyline class="d-line" points={doc.linea} />
+              </g>
+            ))}
+          </g>
+
+          <g class="station" data-st="fac">
+            <polygon class="m-top" points={arcoDer.top} /><polygon class="m-izq" points={arcoDer.izq} /><polygon class="m-der" points={arcoDer.der} />
+            <polygon class="m-top" points={arcoViga.top} /><polygon class="m-izq" points={arcoViga.izq} /><polygon class="m-der" points={arcoViga.der} />
+            <circle class="gate-light" cx={luz[0]} cy={luz[1]} r="7" />
+          </g>
+
+          <!-- Estaciones delante de la banda -->
+          <g class="station" data-st="con">
+            <polygon class="m-top" points={escritorio.top} /><polygon class="m-izq" points={escritorio.izq} /><polygon class="m-der" points={escritorio.der} />
+            <polygon class="screen" points={pantalla} />
+          </g>
+          <g class="station cloud" data-st="rep" transform={`translate(${nube[0]} ${nube[1]})`}>
+            <path class="cloud-body" d="M -95 40 C -130 40 -132 -8 -98 -14 C -100 -58 -40 -70 -22 -36 C -6 -78 66 -70 62 -20 C 104 -24 112 40 70 40 Z" />
+            <path class="cloud-door" d="M -48 40 L -48 2 C -48 -18 -10 -18 -10 2 L -10 40 Z" />
+            <g class="cloud-bars">
+              <rect x="12" y="2" width="9" height="22" rx="2" /><rect x="25" y="-8" width="9" height="32" rx="2" /><rect x="38" y="-18" width="9" height="42" rx="2" />
+            </g>
+          </g>
+
+          <!-- Trabajadores SIGNET y lo que dicen -->
+          {trabajadores.map((t, i) => (
+            <g class="worker" data-st={t.est} style={`--d:${(i * 0.37).toFixed(2)}s`}>
+              <ellipse class="sombra" cx={t.pie[0]} cy={t.pie[1]} rx={t.h * 0.3} ry={t.h * 0.09} />
+              <image class="worker-img" href="/img/signet.webp" x={t.pie[0] - (t.h * 520) / 652 / 2} y={t.pie[1] - t.h} width={(t.h * 520) / 652} height={t.h} />
+              <g class="say" transform={`translate(${t.pie[0] - (t.dice.length * 8.4 + 26) / 2} ${t.pie[1] - t.h - 2})`}>
+                <g class="say-in">
+                  <rect x="0" y="-26" width={t.dice.length * 8.4 + 26} height="30" rx="15" />
+                  <path d={`M ${(t.dice.length * 8.4 + 26) / 2 - 6} 4 l 6 7 l 6 -7 Z`} />
+                  <text x="13" y="-6">{t.dice}</text>
+                </g>
+              </g>
+            </g>
+          ))}
+
+          <!-- Etiquetas -->
+          {estaciones.map((e) => (
+            <g class="tag" data-st={e.id} transform={`translate(${e.tag[0]} ${e.tag[1]})`}>
+              <rect x={-(e.nombre.length * 8.4 + 50) / 2} y="-17" width={e.nombre.length * 8.4 + 50} height="34" rx="17" />
+              <circle cx={-(e.nombre.length * 8.4 + 50) / 2 + 17} cy="0" r="11" />
+              <text class="tag-n" x={-(e.nombre.length * 8.4 + 50) / 2 + 17} y="4.5">{e.n}</text>
+              <text class="tag-t" x={-(e.nombre.length * 8.4 + 50) / 2 + 34} y="5">{e.nombre}</text>
+            </g>
+          ))}
+        </svg>
+        <button type="button" class="plant-pause" id="plant-pause" aria-pressed="false">Pausar</button>
+      </div>
+
+      <ol class="steps" aria-live="polite" data-reveal>
+        {pasos.map((p, i) => (
+          <li class:list={['step', { 'is-on': i === 0 }]} data-step={i}>
+            <span class="step-n">{i + 1}</span>
+            <div><b>{p.t}</b><p>{p.d}</p></div>
+            <span class="step-bar" aria-hidden="true"></span>
+          </li>
+        ))}
+        <li class="step-help">
+          <img src="/img/signet.webp" alt="" width="52" height="65" loading="lazy" />
+          <p>¿Te trabas en algún paso? <a href={wa(mensajes.general)} target="_blank" rel="noopener">El equipo de soporte te ayuda.</a></p>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="flow-data" set:html={JSON.stringify({ ciclo: CICLO, fracciones, ids: estaciones.map((e) => e.id) })}></script>
+
+<style>
+  .flow-wrap { padding-block: 7rem 5.5rem; }
+  .flow-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem 3rem; }
+  .flow-title { font-size: clamp(2.3rem, 4vw, 4rem); max-width: 16ch; }
+  .flow-lead { max-width: 30rem; }
+  .flow-grid { margin-top: 2.5rem; display: grid; grid-template-columns: minmax(0, 8fr) minmax(17rem, 4fr); gap: clamp(1.5rem, 3vw, 3rem); align-items: center; }
+
+  .plant { position: relative; }
+  .plant svg { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--font-sans); }
+
+  .floor { fill: color-mix(in srgb, var(--c-blue-soft) 55%, transparent); stroke: var(--c-accent); stroke-width: 2; stroke-dasharray: 10 9; stroke-opacity: 0.55; }
+
+  /* Banda */
+  .b-top { fill: #1b2f4f; }
+  .b-izq { fill: #c9d8ea; }
+  .b-der { fill: #aec3dd; }
+  .roller { fill: #13294a; }
+  .belt-run { fill: none; stroke: rgb(255 255 255 / 0.35); stroke-width: 2; stroke-dasharray: 6 14; animation: corre 1s linear infinite; }
+  @keyframes corre { to { stroke-dashoffset: -20; } }
+
+  /* Máquinas */
+  .m-top { fill: #ffffff; }
+  .m-izq { fill: #dbe6f3; }
+  .m-der { fill: #c4d5ea; }
+  .f-izq { fill: #9fb5d0; }
+  .f-der { fill: #8aa3c3; }
+  .k-top { fill: #fde3c2; }
+  .k-izq { fill: #f6c48a; }
+  .k-der { fill: #eeae63; }
+  .shelf { stroke: #9fb5d0; stroke-width: 3; }
+  .board { fill: #ffffff; stroke: #c4d5ea; stroke-width: 3; }
+  .board-line { stroke: #c4d5ea; stroke-width: 6; stroke-linecap: round; }
+  .vault { fill: #eef3f9; stroke: #9fb5d0; stroke-width: 4; }
+  .vault-spin { stroke: #13294a; stroke-width: 3; stroke-linecap: round; transform-box: fill-box; transform-origin: center; }
+  .screen { fill: #13294a; }
+  .gate-light { fill: #9fb5d0; transition: fill 300ms ease; }
+  .cloud-body { fill: #e4ecf6; stroke: #c4d5ea; stroke-width: 3; }
+  .cloud-door { fill: #13294a; }
+  .cloud-bars rect { fill: #9fb5d0; transform-box: fill-box; transform-origin: bottom; }
+
+  /* Lo que aún no recibe el pedido espera pálido, como un plano a medio dibujar. */
+  .plant [data-st] { transition: opacity 600ms ease, filter 600ms ease; }
+  .plant [data-st]:not(.is-on):not(.is-done) { opacity: 0.28; filter: saturate(0.55); }
+  .step.is-done b { opacity: 0.85; }
+  .step.is-done .step-n { background: var(--c-head); color: #fff; }
+
+  /* Estación activa: se enciende con el acento. */
+  .station { transition: filter 400ms ease; }
+  .station.is-on { filter: drop-shadow(0 0 10px rgb(249 162 22 / 0.55)); /* taste-skill-ignore: brillo de la estación activa */ }
+  .station.is-on .m-top, .station.is-on .board { fill: #fff7ea; }
+  .station.is-on .board-line { stroke: var(--c-accent); }
+  .station.is-on .gate-light { fill: #2f9d58; }
+  .station.is-on .screen { fill: var(--c-accent); }
+  .station.is-on .cloud-bars rect { fill: var(--c-accent); animation: barras 900ms var(--ease-out-quint) both; }
+  .station.is-on .cloud-bars rect:nth-child(2) { animation-delay: 90ms; }
+  .station.is-on .cloud-bars rect:nth-child(3) { animation-delay: 180ms; }
+  @keyframes barras { from { transform: scaleY(0.2); } }
+  .station.is-on .vault-spin { animation: gira 900ms var(--ease-out-quint); }
+  @keyframes gira { to { transform: rotate(180deg); } }
+
+  /* Documentos */
+  .doc { offset-rotate: 0deg; offset-anchor: 0 0; animation: viaje var(--ciclo) linear infinite; }
+  @keyframes viaje {
+    0% { offset-distance: 0%; opacity: 0; }
+    4% { opacity: 1; }
+    94% { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+  .d-top { fill: #ffffff; }
+  .d-izq { fill: #dbe6f3; }
+  .d-der { fill: #c4d5ea; }
+  .d-line { stroke: #9fb5d0; stroke-width: 2.5; stroke-linecap: round; }
+  .doc-lead .d-top { fill: #fff3df; stroke: var(--c-accent); stroke-width: 2.5; }
+  .doc-lead .d-line { stroke: var(--c-accent); }
+
+  /* Trabajadores */
+  .worker { animation: trabaja 2.8s ease-in-out var(--d) infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+  @keyframes trabaja { 50% { transform: translateY(-5px); } }
+  .sombra { fill: rgb(19 41 74 / 0.14); }
+  .say { opacity: 0; transition: opacity 250ms ease; }
+  .say rect, .say path { fill: var(--c-head); }
+  .say { pointer-events: none; }
+  .say text { fill: #fff; font-size: 15px; font-weight: 700; }
+  .worker.is-on .say { opacity: 1; }
+  .worker.is-on .say-in { animation: globo 450ms var(--ease-out-quint); transform-box: fill-box; transform-origin: 50% 100%; }
+  .worker.is-on { animation: salta 650ms var(--ease-out-quint), trabaja 2.8s ease-in-out 650ms infinite; }
+  @keyframes globo { from { opacity: 0; transform: translateY(8px) scale(0.9); } }
+  @keyframes salta { 35% { transform: translateY(-14px) rotate(-3deg); } }
+
+  /* Etiquetas */
+  .tag rect { fill: #ffffff; stroke: #c4d5ea; stroke-width: 1.5; transition: fill 300ms ease, stroke 300ms ease; }
+  .tag circle { fill: var(--c-blue-soft); transition: fill 300ms ease; }
+  .tag-n { fill: var(--c-head); font-size: 12px; font-weight: 800; text-anchor: middle; }
+  .tag-t { fill: var(--c-head); font-size: 15px; font-weight: 700; }
+  .tag.is-on rect { fill: var(--c-head); stroke: var(--c-head); }
+  .tag.is-on circle { fill: var(--c-accent); }
+  .tag.is-on .tag-t { fill: #fff; }
+  .tag.is-on .tag-n { fill: #fff; }
+
+  .plant-pause {
+    position: absolute; right: 0; bottom: 0; min-height: 2.75rem; padding: 0 1rem; border-radius: 999px;
+    font-size: 0.875rem; font-weight: 700; color: var(--head); background: var(--chip);
+  }
+  .plant.is-paused svg * { animation-play-state: paused !important; }
+
+  /* Pasos */
+  .steps { display: grid; gap: 0.5rem; }
+  .step {
+    position: relative; overflow: hidden; display: flex; gap: 0.9rem; padding: 0.9rem 1rem; border-radius: 16px;
+    background: transparent; color: var(--fg-2); transition: background-color 300ms ease, color 300ms ease;
+  }
+  .step b { display: block; font-size: 1.0625rem; color: var(--head); opacity: 0.6; transition: opacity 300ms ease; }
+  .step p { font-size: 0.9375rem; line-height: 1.4; max-height: 0; opacity: 0; overflow: hidden; transition: max-height 450ms var(--ease-out-quint), opacity 300ms ease, margin 300ms ease; }
+  .step-n { flex: none; width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; font-size: 0.875rem; font-weight: 800; background: var(--chip-2); color: var(--head); transition: background-color 300ms ease, color 300ms ease; }
+  .step.is-on { background: var(--card); color: var(--fg); }
+  .step.is-on b { opacity: 1; }
+  .step.is-on p { max-height: 6rem; opacity: 1; margin-top: 0.25rem; }
+  .step.is-on .step-n { background: var(--c-accent); color: #fff; }
+  .step-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--c-accent); transform: scaleX(0); transform-origin: left; }
+  .step.is-on .step-bar { transform: scaleX(var(--p, 0)); }
+  .step-help { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem; padding: 0.5rem 0.25rem; font-size: 0.9375rem; color: var(--fg-2); }
+  .step-help img { width: 2.75rem; height: auto; flex: none; animation: trabaja 2.8s ease-in-out infinite; }
+  .step-help a { color: var(--head); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 1023px) {
+    .flow-wrap { padding-block: 6rem 4rem; }
+    .flow-grid { grid-template-columns: 1fr; }
+    .plant { margin-inline: calc(var(--margin) * -0.5); }
+    .plant-pause { bottom: -0.5rem; }
+  }
+  /* Celular: la planta conserva su tamaño y se recorre de lado; la cámara sigue a la estación activa. */
+  @media (max-width: 767px) {
+    .plant { overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--margin) * -1); padding: 0 var(--margin) 0.5rem; }
+    .plant::-webkit-scrollbar { display: none; }
+    .plant svg { width: 860px; max-width: none; }
+    .plant-pause { position: sticky; left: 0; bottom: auto; margin-top: 0.25rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .doc, .worker, .belt-run, .step-help img { animation: none !important; }
+    .doc { offset-distance: 30%; }
+    .doc:nth-child(2) { offset-distance: 55%; }
+    .doc:nth-child(3) { offset-distance: 80%; }
+    .doc:nth-child(4) { offset-distance: 8%; }
+  }
+</style>
+
+<script>
+  const datos: { ciclo: number; fracciones: number[]; ids: string[] } = JSON.parse(document.getElementById('flow-data')!.textContent || '{}');
+  const plant = document.querySelector<HTMLElement>('.plant')!;
+  const lider = plant.querySelector<SVGGElement>('.doc-lead')!;
+  const pasos = [...document.querySelectorAll<HTMLElement>('.step')];
+  const pausa = document.getElementById('plant-pause') as HTMLButtonElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let actual = -1;
+
+  function marcar(i: number) {
+    if (i === actual) return;
+    actual = i;
+    const id = datos.ids[i];
+    // Lo que el pedido ya recorrió se ve con su color; lo que falta, pálido. i = -1: vuelve a empezar.
+    plant.querySelectorAll<SVGElement>('[data-st]').forEach((el) => {
+      const k = datos.ids.indexOf(el.dataset.st!);
+      el.classList.toggle('is-on', k === i);
+      el.classList.toggle('is-done', k < i);
+    });
+    pasos.forEach((p, k) => {
+      p.classList.toggle('is-on', k === i);
+      p.classList.toggle('is-done', k < i);
+    });
+    if (i < 0) return;
+    // Si la planta se recorre de lado (celular), centra la estación activa.
+    if (plant.scrollWidth > plant.clientWidth + 4) {
+      const tag = plant.querySelector<SVGGElement>(`.tag[data-st="${id}"]`);
+      if (tag) {
+        const r = tag.getBoundingClientRect();
+        const base = plant.getBoundingClientRect();
+        plant.scrollTo({ left: plant.scrollLeft + r.left - base.left - plant.clientWidth / 2 + r.width / 2, behavior: 'smooth' });
+      }
+    }
+  }
+
+  // El documento líder manda: la estación activa es la última que ya cruzó.
+  function tic() {
+    const anim = lider.getAnimations()[0];
+    if (anim && anim.currentTime != null) {
+      const t = ((Number(anim.currentTime) / 1000) % datos.ciclo) / datos.ciclo;
+      const f = datos.fracciones;
+      let i = f.length - 1;
+      for (let k = 0; k < f.length; k++) if (t >= f[k] - 0.015) i = k;
+      // Al reiniciar: un instante más con todo encendido y luego todo se apaga hasta la primera estación.
+      if (t < f[0] - 0.015) i = t < 0.045 ? f.length - 1 : -1;
+      marcar(i);
+      if (i < 0) { requestAnimationFrame(tic); return; }
+      const desde = f[i];
+      const hasta = i === f.length - 1 ? 1 + f[0] : f[i + 1];
+      const tt = t < desde - 0.02 ? t + 1 : t;
+      pasos[i]?.style.setProperty('--p', Math.min(1, Math.max(0, (tt - desde) / (hasta - desde))).toFixed(3));
+    }
+    requestAnimationFrame(tic);
+  }
+
+  pausa.addEventListener('click', () => {
+    const pausado = plant.classList.toggle('is-paused');
+    pausa.setAttribute('aria-pressed', String(pausado));
+    pausa.textContent = pausado ? 'Reanudar' : 'Pausar';
+  });
+
+  if (reduce) {
+    pausa.hidden = true;
+    marcar(datos.ids.length - 1);
+  } else {
+    requestAnimationFrame(tic);
+  }
+</script>

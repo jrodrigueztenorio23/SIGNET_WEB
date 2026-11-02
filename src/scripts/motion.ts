@@ -5,6 +5,28 @@ import Lenis from 'lenis';
 gsap.registerPlugin(ScrollTrigger);
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Envuelve cada palabra de un titular en una ranura (.w) con su contenido (.wi), sin tocar las etiquetas. */
+function partirPalabras(el: HTMLElement) {
+  const textos: Text[] = [];
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) textos.push(walker.currentNode as Text);
+  textos.forEach((t) => {
+    const frag = document.createDocumentFragment();
+    t.data.split(/(\s+)/).forEach((parte) => {
+      if (!parte) return;
+      if (/^\s+$/.test(parte)) { frag.append(document.createTextNode(parte)); return; }
+      const w = document.createElement('span');
+      w.className = 'w';
+      const wi = document.createElement('span');
+      wi.className = 'wi';
+      wi.textContent = parte;
+      w.append(wi);
+      frag.append(w);
+    });
+    t.replaceWith(frag);
+  });
+}
 const root = document.documentElement;
 
 
@@ -28,84 +50,78 @@ if (reduce) {
     }),
   );
 
-  // Hero: el nombre sube línea por línea; los arcos del logo giran con el scroll y siguen al cursor.
-  gsap.from('.hero .line-inner', { yPercent: 105, duration: 1.1, ease: 'expo.out', stagger: 0.12, delay: 0.1 });
-  gsap.from('.rings svg', { rotation: -90, scale: 0.6, opacity: 0, duration: 1.8, ease: 'expo.out', delay: 0.15 });
-  gsap.utils.toArray<SVGElement>('.ring').forEach((ring, i) => {
-    gsap.set(ring, { svgOrigin: '0 0' });
-    gsap.to(ring, {
-      rotation: (i % 2 ? -1 : 1) * (120 + i * 60),
+  // Portada: sólo existe en la página principal.
+  if (document.querySelector('.hero')) {
+    // Hero: el nombre sube línea por línea; los arcos del logo giran con el scroll y siguen al cursor.
+    gsap.from('.hero .line-inner', { yPercent: 105, duration: 1.1, ease: 'expo.out', stagger: 0.12, delay: 0.1 });
+    gsap.from('.rings svg', { rotation: -90, scale: 0.6, opacity: 0, duration: 1.8, ease: 'expo.out', delay: 0.15 });
+    gsap.utils.toArray<SVGElement>('.ring').forEach((ring, i) => {
+      gsap.set(ring, { svgOrigin: '0 0' });
+      gsap.to(ring, {
+        rotation: (i % 2 ? -1 : 1) * (120 + i * 60),
+        ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.6 },
+      });
+    });
+    gsap.to('.hero-copy', {
+      yPercent: -12,
       ease: 'none',
-      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.6 },
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
     });
-  });
-  gsap.to('.hero-copy', {
-    yPercent: -12,
-    ease: 'none',
-    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
-  });
 
-  // Hero: la pantalla de SIG entra inclinada, se endereza con el scroll y las tarjetas flotan delante.
-  gsap.from('.hero-screen', { x: 160, opacity: 0, duration: 1.6, ease: 'expo.out', delay: 0.25 });
-  gsap.from('.hero .float', { y: 40, opacity: 0, scale: 0.92, duration: 1, ease: 'back.out(1.6)', stagger: 0.15, delay: 0.9 });
-  const ancho = innerWidth >= 1024;
-  gsap.fromTo('.stage-inner', {
-    rotateY: ancho ? -16 : -10,
-    rotateX: ancho ? 7 : 5,
-    rotateZ: ancho ? 1.5 : 0,
-    transformOrigin: '0% 50%',
-  }, {
-    rotateY: 0,
-    rotateX: 0,
-    rotateZ: 0,
-    scale: 1.04,
-    yPercent: -8,
-    ease: 'none',
-    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.8 },
-  });
-
-  // Cada pieza del hero sigue al cursor según su profundidad: las tarjetas más que la pantalla.
-  if (window.matchMedia('(hover: hover)').matches) {
-    const capas = [
-      ...gsap.utils.toArray<HTMLElement>('.hero [data-depth]').map((el) => ({ el, d: Number(el.dataset.depth) })),
-      ...gsap.utils.toArray<HTMLElement>('.rings').map((el) => ({ el, d: -0.8 })),
-    ].map(({ el, d }) => ({
-      d,
-      x: gsap.quickTo(el, 'x', { duration: 1, ease: 'power3.out' }),
-      y: gsap.quickTo(el, 'y', { duration: 1, ease: 'power3.out' }),
-    }));
-    window.addEventListener('pointermove', (e) => {
-      const nx = e.clientX / innerWidth - 0.5;
-      const ny = e.clientY / innerHeight - 0.5;
-      capas.forEach((c) => { c.x(nx * 28 * c.d); c.y(ny * 22 * c.d); });
+    // Hero: la pantalla de SIG entra inclinada, se endereza con el scroll y las tarjetas flotan delante.
+    gsap.from('.hero-screen', { x: 160, opacity: 0, duration: 1.6, ease: 'expo.out', delay: 0.25 });
+    gsap.from('.hero .float', { y: 40, opacity: 0, scale: 0.92, duration: 1, ease: 'back.out(1.6)', stagger: 0.15, delay: 0.9 });
+    const ancho = innerWidth >= 1024;
+    gsap.fromTo('.stage-inner', {
+      rotateY: ancho ? -16 : -10,
+      rotateX: ancho ? 7 : 5,
+      rotateZ: ancho ? 1.5 : 0,
+      transformOrigin: '0% 50%',
+    }, {
+      rotateY: 0,
+      rotateX: 0,
+      rotateZ: 0,
+      scale: 1.04,
+      yPercent: -8,
+      ease: 'none',
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.8 },
     });
+
+    // Cada pieza del hero sigue al cursor según su profundidad: las tarjetas más que la pantalla.
+    if (window.matchMedia('(hover: hover)').matches) {
+      const capas = [
+        ...gsap.utils.toArray<HTMLElement>('.hero [data-depth]').map((el) => ({ el, d: Number(el.dataset.depth) })),
+        ...gsap.utils.toArray<HTMLElement>('.rings').map((el) => ({ el, d: -0.8 })),
+      ].map(({ el, d }) => ({
+        d,
+        x: gsap.quickTo(el, 'x', { duration: 1, ease: 'power3.out' }),
+        y: gsap.quickTo(el, 'y', { duration: 1, ease: 'power3.out' }),
+      }));
+      window.addEventListener('pointermove', (e) => {
+        const nx = e.clientX / innerWidth - 0.5;
+        const ny = e.clientY / innerHeight - 0.5;
+        capas.forEach((c) => { c.x(nx * 28 * c.d); c.y(ny * 22 * c.d); });
+      });
+    }
   }
 
-  // Así se ve SIG: en escritorio la sección queda fija y el scroll recorre los módulos.
-  const tour = document.querySelector<HTMLElement>('.tour-pin');
-  const pasos = document.querySelectorAll('.tour-tab').length;
-  if (tour && pasos) {
-    ScrollTrigger.matchMedia({
-      '(min-width: 1024px)': () => {
-        const st = ScrollTrigger.create({
-          trigger: tour,
-          start: 'top top',
-          end: () => `+=${pasos * innerHeight * 0.45}`,
-          pin: true,
-          onUpdate: (self) => {
-            const i = Math.min(pasos - 1, Math.floor(self.progress * pasos));
-            document.dispatchEvent(new CustomEvent('tour:step', { detail: i }));
-          },
-        });
-        const ir = (e: Event) => {
-          const i = (e as CustomEvent<number>).detail;
-          lenis.scrollTo(st.start + ((i + 0.5) / pasos) * (st.end - st.start), { duration: 0.9 });
-        };
-        document.addEventListener('tour:pick', ir);
-        return () => document.removeEventListener('tour:pick', ir);
-      },
+  // Titulares: entran palabra por palabra, cada una subiendo desde su propia ranura.
+  document.querySelectorAll<HTMLElement>('.chapter .headline[data-reveal]').forEach((h) => {
+    if (h.closest('.hero')) return;
+    partirPalabras(h);
+    h.removeAttribute('data-reveal');
+    h.style.opacity = '1';
+    h.style.transform = 'none';
+    gsap.from(h.querySelectorAll('.wi'), {
+      yPercent: 115,
+      rotate: 4,
+      duration: 1,
+      ease: 'expo.out',
+      stagger: 0.045,
+      scrollTrigger: { trigger: h, start: 'top 85%', once: true },
     });
-  }
+  });
 
   // Entradas: dentro de cada capítulo, sus partes en orden, una tras otra.
   document.querySelectorAll<HTMLElement>('.chapter').forEach((section) => {
@@ -121,6 +137,16 @@ if (reduce) {
     });
   });
 
+  // Header: al dejar el inicio se recoge en una cápsula flotante.
+  const header = document.getElementById('header');
+  if (header) {
+    ScrollTrigger.create({
+      start: 120,
+      end: 'max',
+      onToggle: (self) => header.classList.toggle('is-float', self.isActive),
+    });
+  }
+
   // Cifras: el total cuenta hacia arriba y las barras crecen desde el borde.
   document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
     const n = Number(el.dataset.count);
@@ -133,8 +159,8 @@ if (reduce) {
       scrollTrigger: { trigger: el, start: 'top 85%', once: true },
     });
   });
-  const vertical = window.matchMedia('(min-width: 768px)').matches;
-  gsap.from('.bar-fill', {
+  const vertical = window.matchMedia('(min-width: 1200px)').matches;
+  if (document.querySelector('.bars')) gsap.from('.bar-fill', {
     [vertical ? 'scaleY' : 'scaleX']: 0,
     duration: 1.2,
     ease: 'expo.out',
@@ -162,21 +188,47 @@ if (reduce) {
     }
   });
 
-  // Plan: el ticket se imprime con un pequeño giro que se endereza.
-  gsap.from('.ticket', {
-    rotate: -4,
-    y: 60,
-    duration: 1.2,
-    ease: 'expo.out',
-    scrollTrigger: { trigger: '.ticket', start: 'top 85%', once: true },
-  });
-
   // Footer: el nombre entra deslizándose.
-  gsap.from('.wordmark', {
+  if (document.querySelector('.wordmark')) gsap.from('.wordmark', {
     xPercent: 30,
     ease: 'none',
     scrollTrigger: { trigger: '.foot', start: 'top bottom', end: 'bottom bottom', scrub: true },
   });
+
+  // Puntero propio: un punto y un aro que lo sigue. Crece sobre lo que se puede tocar y muestra una
+  // etiqueta sobre las partes animadas (data-cursor). Sólo con mouse; en pantallas táctiles no existe.
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const dot = document.createElement('div');
+    dot.className = 'cur-dot';
+    const ring = document.createElement('div');
+    ring.className = 'cur-ring';
+    const etiqueta = document.createElement('span');
+    ring.append(etiqueta);
+    document.body.append(dot, ring);
+    root.classList.add('has-cursor');
+    const dx = gsap.quickTo(dot, 'x', { duration: 0.08, ease: 'power3.out' });
+    const dy = gsap.quickTo(dot, 'y', { duration: 0.08, ease: 'power3.out' });
+    const rx = gsap.quickTo(ring, 'x', { duration: 0.45, ease: 'power3.out' });
+    const ry = gsap.quickTo(ring, 'y', { duration: 0.45, ease: 'power3.out' });
+    const tocable = 'a, button, label, select, summary, [role="tab"], .ia-col, .logo, .bar, .tile, .build';
+    window.addEventListener('pointermove', (e) => {
+      dx(e.clientX); dy(e.clientY); rx(e.clientX); ry(e.clientY);
+      root.classList.add('cur-on');
+    });
+    document.documentElement.addEventListener('pointerleave', () => root.classList.remove('cur-on'));
+    document.addEventListener('pointerover', (e) => {
+      const t = e.target as Element;
+      const texto = t.closest('input:not([type="radio"]):not([type="checkbox"]), textarea');
+      const zona = t.closest<HTMLElement>('[data-cursor]');
+      const link = t.closest(tocable);
+      root.classList.toggle('cur-text', !!texto);
+      root.classList.toggle('cur-link', !texto && !!link);
+      root.classList.toggle('cur-label', !texto && !link && !!zona);
+      if (zona && !link) etiqueta.textContent = zona.dataset.cursor || '';
+    });
+    window.addEventListener('pointerdown', () => root.classList.add('cur-down'));
+    window.addEventListener('pointerup', () => root.classList.remove('cur-down'));
+  }
 
   // Botones magnéticos.
   if (window.matchMedia('(hover: hover)').matches) {
@@ -196,8 +248,10 @@ if (reduce) {
 // El header toma la tinta del capítulo que tiene debajo. Se crea al final para que cuente el espacio
 // que agrega la sección fijada.
 document.querySelectorAll<HTMLElement>('[data-ink]').forEach((section) => {
-  const ink = section.dataset.ink!;
-  const bg = getComputedStyle(section).backgroundColor;
+  const estilo = getComputedStyle(section);
+  const ink = estilo.color;
+  const bg = estilo.backgroundColor;
+  const oscuro = section.classList.contains('tone-dark');
   ScrollTrigger.create({
     trigger: section,
     start: 'top 36px',
@@ -206,6 +260,7 @@ document.querySelectorAll<HTMLElement>('[data-ink]').forEach((section) => {
       if (!self.isActive) return;
       root.style.setProperty('--header-ink', ink);
       root.style.setProperty('--header-bg', bg);
+      root.style.setProperty('--header-line', oscuro ? 'rgb(255 255 255 / 0.08)' : 'rgb(26 35 50 / 0.08)');
     },
   });
 });

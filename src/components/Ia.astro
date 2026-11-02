@@ -1,0 +1,384 @@
+---
+import { wa } from '../config/site';
+import { tono, type Tono } from '../config/modelos';
+
+interface Props { tone: Tono }
+const { tone } = Astro.props;
+
+// Consultas con IA de SIG Advanced, reproducida con datos ficticios de "Demo Andina S.A.C.".
+// Las cifras cuadran entre sí: ventas 2026 = S/ 1,997,980; octubre = S/ 248,310 (como en el hero).
+const meses = [
+  ['Ene', 162400], ['Feb', 171250], ['Mar', 189900], ['Abr', 176300], ['May', 198750],
+  ['Jun', 205100], ['Jul', 221480], ['Ago', 214060], ['Set', 210430], ['Oct', 248310],
+] as const;
+const maxMes = Math.max(...meses.map((m) => m[1]));
+// Un color sobrio por mes, de los azules de SIG a tonos arena; octubre (el mejor) en el naranja de la marca.
+const nombresMes = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre'];
+const variacion = (k: number) => {
+  if (k === 0) return '';
+  const p = (meses[k][1] / meses[k - 1][1] - 1) * 100;
+  return `${p >= 0 ? '+' : '−'}${Math.abs(p).toFixed(1)}% vs ${nombresMes[k - 1].toLowerCase()}`;
+};
+const coloresMes = ['#2f4a70', '#3d5a82', '#4d6c93', '#5a7f9f', '#5f8f98', '#6a978a', '#8a9a7c', '#a59a78', '#b3916f', '#f9a216'];
+const top = [
+  ['Constructora Los Pinos S.A.', 312480],
+  ['Importadora Pacífico S.A.C.', 268910],
+  ['Ferretería El Sol S.A.C.', 201350],
+  ['Minera Altiplano Demo S.A.', 187620],
+  ['Aceros del Centro S.A.C.', 154200],
+] as const;
+const soles = (n: number) => 'S/ ' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const ejemplos = [
+  {
+    id: 'grafico', formato: 'Gráfico', paso: 'Revisando las ventas de 2026…',
+    pregunta: 'Ventas por mes de 2026 en soles, en gráfico de barras',
+    resumen: 'Octubre fue el mejor mes del año: S/ 248,310, un 18% más que setiembre. En diez meses van S/ 1,997,980.',
+  },
+  {
+    id: 'tabla', formato: 'Tabla', paso: 'Sumando ventas por cliente…',
+    pregunta: 'Top 5 clientes por ventas de 2026',
+    resumen: 'Los cinco suman S/ 1,124,560, el 56% de lo vendido en el año. Constructora Los Pinos va primero.',
+  },
+  {
+    id: 'respuesta', formato: 'Respuesta', paso: 'Cruzando facturas y cobranzas de setiembre…',
+    pregunta: '¿Cuánto se cobró de la facturación de setiembre y cuánto queda pendiente?',
+    resumen: 'De lo facturado en setiembre ya se cobró el 84%. Quedan siete comprobantes por cobrar, el más antiguo vence el 15/11.',
+  },
+];
+const formatos = ['Respuesta', 'Tabla', 'Excel', 'Gráfico'];
+
+const reglas = [
+  'Solo lee: no graba, no borra y no cambia nada.',
+  'Solo ve los datos de la empresa con la que entraste.',
+  'Cada consulta queda registrada con tu usuario.',
+  'Lo que preguntaste queda en «Mis consultas», para volver a descargarlo.',
+];
+---
+
+<section id="ia" class:list={['chapter', tono(tone)]} data-ink aria-labelledby="ia-title">
+  <div class="wrap ia-grid">
+    <div class="ia-copy">
+      <h2 id="ia-title" class="headline ia-title" data-reveal>Pregúntale <span class="it it-accent">a tu ERP</span></h2>
+      <p class="ia-lead" data-reveal>
+        Escribe la pregunta como se la harías a tu contador. Consultas con IA revisa los datos de tu empresa y te
+        responde con un texto, una tabla, un Excel o un gráfico.
+      </p>
+
+      <p class="ia-try-label" data-reveal>Prueba una pregunta:</p>
+      <div class="ia-try" role="group" aria-label="Preguntas de ejemplo" data-reveal>
+        {ejemplos.map((e, i) => (
+          <button type="button" class="ia-q" aria-pressed={i === 0 ? 'true' : 'false'} data-q={e.id}>{e.pregunta}</button>
+        ))}
+      </div>
+
+      <ul class="ia-rules" data-reveal>
+        {reglas.map((r) => <li>{r}</li>)}
+      </ul>
+      <a class="btn ia-btn" data-magnetic data-reveal href={wa('Hola, quiero probar Consultas con IA de SIG Advanced.')} target="_blank" rel="noopener">
+        Quiero probarlo con mis datos
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 9h13M10 4l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+      </a>
+    </div>
+
+    <div class="ia-stage" data-reveal>
+      <div class="ia-frame" data-ui>
+        <div class="ia-app">
+          <p class="ia-crumb">Inicio / <span>Consultas con IA</span></p>
+
+          <div class="ia-card">
+            <p class="ia-h"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4 1.6 4.4L15 10l-4.4 1.6L9 16l-1.6-4.4L3 10l4.4-1.6L9 4Zm9 9 .9 2.1 2.1.9-2.1.9L18 19l-.9-2.1L15 16l2.1-.9L18 13Zm0-11 .7 1.3L20 4l-1.3.7L18 6l-.7-1.3L16 4l1.3-.7L18 2Z"/></svg>Consultas con IA</p>
+            <p class="ia-sub">Pregunta lo que necesites saber de tu empresa. El asistente revisa los datos y te entrega el resultado en el formato que elijas.</p>
+            <div class="ia-bar">
+              <span class="ia-as">Entregar como</span>
+              <span class="ia-seg">
+                {formatos.map((f) => <span data-fmt={f} class:list={{ 'is-on': f === ejemplos[0].formato }}>{f}</span>)}
+              </span>
+            </div>
+            <p class="ia-chips"><i class="ok">Solo lectura</i><i class="on">Asistente en línea</i><i>Quedan 27 de 30 consultas hoy</i></p>
+            <div class="ia-input">
+              <small>Tu consulta</small>
+              <span class="ia-typed" id="ia-typed">{ejemplos[0].pregunta}</span><span class="ia-caret" aria-hidden="true"></span>
+            </div>
+            <div class="ia-send-row"><span class="ia-send">Consultar</span></div>
+          </div>
+
+          <div class="ia-card ia-result" aria-live="polite">
+            <div class="ia-result-head">
+              <b id="ia-q-echo">{ejemplos[0].pregunta}</b>
+              <i class="ia-status" id="ia-status">Listo</i>
+            </div>
+            <p class="ia-step" id="ia-step" hidden></p>
+
+            {ejemplos.map((e, i) => (
+              <div class="ia-out" data-out={e.id} hidden={i !== 0}>
+                <p class="ia-summary">{e.resumen}</p>
+
+                {e.id === 'grafico' && (
+                  <div class="ia-chart" role="group" aria-label="Gráfico de barras de ventas por mes de enero a octubre de 2026; octubre es el mes más alto con S/ 248,310">
+                    {meses.map(([m, v], k) => (
+                      <span
+                        class:list={['ia-col', { hi: m === 'Oct', 'tip-left': k >= meses.length - 2 }]}
+                        style={`--v:${v / maxMes};--c:${coloresMes[k]};--k:${k}`}
+                        tabindex="0"
+                        aria-label={`${nombresMes[k]} 2026: S/ ${v.toLocaleString('en-US')}${k ? `, ${variacion(k)}` : ''}`}
+                      >
+                        <em aria-hidden="true">{Math.round(v / 1000)}k</em><i aria-hidden="true"></i><small aria-hidden="true">{m}</small>
+                        <span class="tip" aria-hidden="true">
+                          <b>{nombresMes[k]} 2026</b>
+                          <span class="tip-v">S/ {v.toLocaleString('en-US')}</span>
+                          {k > 0 && <span class:list={['tip-d', { down: v < meses[k - 1][1] }]}>{variacion(k)}</span>}
+                          <span class="tip-s">{((v / 1997980) * 100).toFixed(1)}% del año</span>
+                        </span>
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {e.id === 'tabla' && (
+                  <table class="ia-table">
+                    <thead><tr><th>#</th><th>Cliente</th><th class="num">Ventas 2026 (S/)</th><th class="num">% del año</th></tr></thead>
+                    <tbody>
+                      {top.map(([c, v], k) => (
+                        <tr><td>{k + 1}</td><td>{c}</td><td class="num">{v.toLocaleString('en-US')}.00</td><td class="num">{(v / 1997980 * 100).toFixed(1)}%</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+
+                {e.id === 'respuesta' && (
+                  <div class="ia-cards">
+                    <span><small>Facturado en setiembre</small><b>{soles(210430)}</b></span>
+                    <span><small>Cobrado</small><b class="ok">{soles(176815.4)}</b><em>84%</em></span>
+                    <span><small>Pendiente</small><b class="bad">{soles(33614.6)}</b><em>7 comprobantes</em></span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ia-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(2rem, 4vw, 4.5rem);
+    align-items: center;
+    padding-block: 8rem 6rem;
+  }
+  .ia-copy { order: 2; }
+  .ia-stage { order: 1; }
+  .ia-title { font-size: clamp(2.75rem, 5.2vw, 5.25rem); max-width: 10ch; }
+  .ia-lead { margin-top: 1.75rem; max-width: 32rem; font-size: 1.1875rem; color: var(--fg-2); }
+  .ia-try-label { margin-top: 2rem; font-weight: 700; color: var(--head); }
+  .ia-try { margin-top: 0.75rem; display: grid; gap: 8px; max-width: 32rem; }
+  .ia-q {
+    text-align: left;
+    min-height: 2.75rem;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    background: var(--chip);
+    color: var(--fg);
+    border-radius: 14px;
+    transition: background-color 200ms ease, border-color 200ms ease, transform 160ms var(--ease-out-quint);
+  }
+  .ia-q:hover { background: var(--chip-2); }
+  .ia-q:active { transform: scale(0.98); }
+  .ia-q[aria-pressed='true'] { background: var(--strong); color: var(--strong-fg); }
+  .ia-rules { margin: 2rem 0 2.25rem; display: grid; gap: 0.45rem; max-width: 32rem; font-size: 1rem; }
+  .ia-rules li { padding-left: 1.4rem; position: relative; }
+  .ia-rules li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.6rem; height: 0.6rem; background: var(--c-accent); border-radius: 50%; }
+
+  /* Réplica de la pantalla: diseño a 640 px en em, escala con el ancho. */
+  .ia-frame { container-type: inline-size; }
+  .ia-app {
+    font-size: calc(100cqw / 40);
+    font-family: Roboto, 'Segoe UI', system-ui, sans-serif; /* taste-skill-ignore: tipografía de SIG */
+    font-stretch: 100%;
+    letter-spacing: 0;
+    line-height: 1.35;
+    background: #f5f7fa;
+    color: #1a2332;
+    padding: 1.1em 1.2em 1.3em;
+    border-radius: 14px;
+    outline: 1px solid var(--line);
+    box-shadow: var(--shadow); /* taste-skill-ignore: pantalla del producto */
+  }
+  .ia-crumb { font-size: 0.85em; margin-bottom: 0.8em; }
+  .ia-crumb span { color: #8a94a6; }
+  .ia-card { background: #fff; border-radius: 0.8em; padding: 1.1em 1.2em; box-shadow: 0 0.1em 0.4em rgb(16 24 40 / 0.06); /* taste-skill-ignore: estilo de SIG */ }
+  .ia-card + .ia-card { margin-top: 0.8em; }
+  .ia-h { display: flex; align-items: center; gap: 0.45em; font-weight: 700; font-size: 1.1em; }
+  .ia-h svg { width: 1.2em; fill: #004080; }
+  .ia-sub { font-size: 0.8em; color: #4a5568; margin-top: 0.3em; }
+  .ia-chips { display: flex; flex-wrap: wrap; gap: 0.5em; margin-top: 0.7em; font-size: 0.72em; }
+  .ia-chips i { font-style: normal; border: 0.1em solid #c5ccd6; border-radius: 1em; padding: 0.2em 0.8em; color: #4a5568; }
+  .ia-chips .ok { border-color: #1e7e45; color: #116a37; background: #eef9f1; }
+  .ia-chips .on { border-color: #1e7e45; color: #116a37; background: #dcf3e5; }
+  .ia-input { position: relative; margin-top: 1em; border: 0.08em solid #b9c2cf; border-radius: 0.35em; min-height: 4.4em; padding: 0.9em 0.9em; font-size: 0.9em; }
+  .ia-input small { position: absolute; top: -0.7em; left: 0.7em; background: #fff; padding: 0 0.3em; font-size: 0.72em; color: #4a5568; }
+  .ia-caret { display: inline-block; width: 0.08em; height: 1.1em; background: #004080; vertical-align: text-bottom; margin-left: 0.05em; animation: parpadeo 1s steps(1) infinite; }
+  @keyframes parpadeo { 50% { opacity: 0; } }
+  .ia-bar { display: flex; align-items: center; gap: 0.7em; margin-top: 0.8em; font-size: 0.78em; }
+  .ia-as { color: #4a5568; font-weight: 600; }
+  .ia-seg { display: flex; border: 0.1em solid #004080; border-radius: 0.4em; overflow: hidden; }
+  .ia-seg span { padding: 0.45em 0.9em; color: #004080; font-weight: 500; transition: background-color 200ms ease, color 200ms ease; }
+  .ia-seg span + span { border-left: 0.1em solid #004080; }
+  .ia-seg .is-on { background: #004080; color: #fff; font-weight: 700; }
+  .ia-send-row { display: flex; justify-content: flex-end; margin-top: 0.8em; font-size: 0.78em; }
+  .ia-send { margin-left: auto; background: #004080; color: #fff; font-weight: 700; padding: 0.55em 1.2em; border-radius: 0.4em; }
+
+  .ia-result { min-height: 17.5em; }
+  .ia-result-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1em; font-size: 0.88em; }
+  .ia-status { flex: none; font-style: normal; font-size: 0.85em; font-weight: 700; background: #1e7e45; color: #fff; padding: 0.2em 0.8em; border-radius: 1em; }
+  .ia-status.is-busy { background: #fef3e2; color: #9a5b00; }
+  .ia-step { margin-top: 1em; font-size: 0.85em; color: #4a5568; }
+  .ia-summary { margin-top: 0.8em; font-size: 0.88em; font-weight: 600; }
+  .ia-out:not([hidden]) { animation: aparece 500ms var(--ease-out-quint) both; }
+  @keyframes aparece { from { opacity: 0; transform: translateY(0.6em); } }
+
+  .ia-chart { display: flex; align-items: flex-end; gap: 0.5em; height: 10em; margin-top: 1em; border-bottom: 0.08em solid #c5ccd6; padding-bottom: 0; }
+  .ia-col { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
+  .ia-col i { width: 100%; height: calc(var(--v) * 78%); background: var(--c); border-radius: 0.15em 0.15em 0 0; transform-origin: bottom; }
+  .ia-col em { font-style: normal; font-size: 0.6em; color: #4a5568; margin-bottom: 0.2em; }
+  /* Al entrar en pantalla (o al volver a pedir el gráfico) las barras crecen una tras otra, de izquierda a derecha. */
+  .ia-chart:not(.is-in) i { transform: scaleY(0); }
+  .ia-chart:not(.is-in) em { opacity: 0; }
+  .ia-chart.is-in i { animation: crece 700ms var(--ease-out-quint) both; animation-delay: calc(var(--k) * 110ms); }
+  .ia-chart.is-in em { animation: asoma 400ms ease both; animation-delay: calc(var(--k) * 110ms + 450ms); }
+  .ia-col.hi i { box-shadow: 0 0 0 0.1em #fff, 0 0 0 0.18em #f9a216; /* taste-skill-ignore: barra destacada del gráfico */ }
+  /* Interacción: la barra bajo el mouse (o con foco) se levanta y muestra su detalle; las demás se apagan. */
+  .ia-col { cursor: pointer; outline: none; }
+  .ia-col i { transition: filter 250ms ease, opacity 250ms ease; }
+  .ia-chart:has(.ia-col:hover, .ia-col:focus-visible) .ia-col:not(:hover):not(:focus-visible) i { opacity: 0.35; filter: saturate(0.4); }
+  .ia-chart:has(.ia-col:hover, .ia-col:focus-visible) .ia-col:not(:hover):not(:focus-visible) em { opacity: 0.35; }
+  .ia-col:hover i, .ia-col:focus-visible i { filter: brightness(1.08) saturate(1.15); }
+  .ia-col:focus-visible i { outline: 0.12em solid #13294a; outline-offset: 0.12em; }
+  .tip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--v) * 78% + 1.5em);
+    translate: -50% 0.4em;
+    z-index: 3;
+    display: grid;
+    gap: 0.15em;
+    min-width: 9.5em;
+    padding: 0.6em 0.75em;
+    border-radius: 0.6em;
+    background: #13294a;
+    color: #fff;
+    font-size: 0.72em;
+    line-height: 1.25;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease, translate 260ms var(--ease-out-quint);
+  }
+  .tip::after { content: ''; position: absolute; left: 50%; bottom: -0.35em; width: 0.7em; height: 0.7em; background: #13294a; translate: -50% 0; rotate: 45deg; }
+  .tip-left .tip { left: auto; right: -0.2em; translate: 0 0.4em; }
+  .tip-left .tip::after { left: auto; right: 1.2em; translate: 0 0; }
+  .ia-col:hover .tip, .ia-col:focus-visible .tip { opacity: 1; translate: -50% 0; }
+  .tip-left.ia-col:hover .tip, .tip-left.ia-col:focus-visible .tip { translate: 0 0; }
+  .tip b { font-size: 0.95em; color: rgb(255 255 255 / 0.75); font-weight: 600; }
+  .tip-v { font-size: 1.35em; font-weight: 800; }
+  .tip-d { color: #6fdc9b; font-weight: 700; }
+  .tip-d.down { color: #ff9a8a; }
+  .tip-s { color: rgb(255 255 255 / 0.7); }
+  @keyframes crece { from { transform: scaleY(0); } 70% { transform: scaleY(1.04); } to { transform: scaleY(1); } }
+  @keyframes asoma { from { opacity: 0; transform: translateY(0.4em); } }
+  @media (prefers-reduced-motion: reduce) { .ia-chart:not(.is-in) i { transform: none; } .ia-chart:not(.is-in) em { opacity: 1; } }
+  .ia-col small { position: absolute; bottom: -1.6em; font-size: 0.65em; color: #4a5568; }
+  .ia-out[data-out='grafico'] { padding-bottom: 1.2em; }
+
+  .ia-table { width: 100%; border-collapse: collapse; margin-top: 0.8em; font-size: 0.78em; }
+  .ia-table th { text-align: left; font-weight: 700; color: #4a5568; padding: 0.6em 0.5em; border-bottom: 0.15em solid #002f5f; }
+  .ia-table td { padding: 0.6em 0.5em; border-bottom: 0.07em solid #e2e8f0; }
+  .ia-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .ia-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7em; margin-top: 1em; }
+  .ia-cards span { border: 0.07em solid #e2e8f0; border-radius: 0.6em; padding: 0.8em 0.9em; }
+  .ia-cards small { display: block; font-size: 0.72em; color: #4a5568; }
+  .ia-cards b { display: block; font-size: 1.05em; margin-top: 0.25em; font-variant-numeric: tabular-nums; }
+  .ia-cards b.ok { color: #116a37; }
+  .ia-cards b.bad { color: #c62828; }
+  .ia-cards em { display: block; font-style: normal; font-size: 0.72em; color: #4a5568; margin-top: 0.15em; }
+
+  @media (max-width: 1023px) {
+    .ia-grid { grid-template-columns: 1fr; padding-block: 6.5rem 4rem; }
+    .ia-copy, .ia-stage { order: 0; }
+    .ia-stage { margin-top: 0.5rem; }
+  }
+  @media (max-width: 599px) {
+    .ia-app { font-size: calc(100cqw / 24); padding: 0.9em; }
+    .ia-crumb { display: none; }
+    .ia-bar { flex-wrap: wrap; }
+    .ia-cards { grid-template-columns: 1fr; }
+    .ia-col em { display: none; }
+  }
+</style>
+
+<script>
+  const botones = [...document.querySelectorAll<HTMLButtonElement>('.ia-q')];
+  const salidas = [...document.querySelectorAll<HTMLElement>('.ia-out')];
+  const escrito = document.getElementById('ia-typed')!;
+  const eco = document.getElementById('ia-q-echo')!;
+  const estado = document.getElementById('ia-status')!;
+  const paso = document.getElementById('ia-step')!;
+  const segmentos = [...document.querySelectorAll<HTMLElement>('[data-fmt]')];
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const datos: Record<string, { formato: string; paso: string }> = {
+    grafico: { formato: 'Gráfico', paso: 'Revisando las ventas de 2026…' },
+    tabla: { formato: 'Tabla', paso: 'Sumando ventas por cliente…' },
+    respuesta: { formato: 'Respuesta', paso: 'Cruzando facturas y cobranzas de setiembre…' },
+  };
+  let turno = 0;
+
+  const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  async function preguntar(btn: HTMLButtonElement) {
+    const id = btn.dataset.q!;
+    const texto = btn.textContent!.trim();
+    const mio = ++turno;
+    botones.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    segmentos.forEach((s) => s.classList.toggle('is-on', s.dataset.fmt === datos[id].formato));
+    salidas.forEach((s) => (s.hidden = true));
+
+    if (reduce) {
+      escrito.textContent = texto;
+    } else {
+      escrito.textContent = '';
+      for (let i = 1; i <= texto.length; i++) {
+        if (mio !== turno) return;
+        escrito.textContent = texto.slice(0, i);
+        await espera(18);
+      }
+    }
+    eco.textContent = texto;
+    estado.textContent = 'Revisando';
+    estado.classList.add('is-busy');
+    paso.textContent = datos[id].paso;
+    paso.hidden = false;
+    await espera(reduce ? 0 : 1100);
+    if (mio !== turno) return;
+    paso.hidden = true;
+    estado.textContent = 'Listo';
+    estado.classList.remove('is-busy');
+    salidas.forEach((s) => (s.hidden = s.dataset.out !== id));
+  }
+
+  botones.forEach((b) => b.addEventListener('click', () => preguntar(b)));
+
+  // El gráfico se anima cuando se ve; al volver a mostrarse (otra pregunta y regreso) la animación se repite sola.
+  const grafico = document.querySelector<HTMLElement>('.ia-chart');
+  if (grafico) {
+    new IntersectionObserver((entries, io) => {
+      if (entries.some((e) => e.isIntersecting)) { grafico.classList.add('is-in'); io.disconnect(); }
+    }, { threshold: 0.5 }).observe(grafico);
+  }
+</script>

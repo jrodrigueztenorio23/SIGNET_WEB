@@ -1,15 +1,19 @@
 ---
 // Tablero de módulos: cada mosaico es un primer plano de una pieza real de la interfaz de SIG Advanced.
+import { tono, type Tono } from '../config/modelos';
+
+interface Props { tone: Tono }
+const { tone } = Astro.props;
 ---
 
-<section id="modulos" class="chapter bg-navy-deep text-paper" data-ink="#ffffff" aria-labelledby="modulos-title">
+<section id="modulos" class:list={['chapter', tono(tone)]} data-ink aria-labelledby="modulos-title">
   <div class="board pt-24 pb-2.5 md:pt-28">
-    <div class="tile t-head bg-navy" data-tile>
-      <h2 id="modulos-title" class="headline-tile">12 módulos, un solo sistema</h2>
-      <p class="caption-text max-w-[34ch]">Cada área trabaja sobre los mismos datos: lo que vende Comercial ya está en Almacén y en Contabilidad.</p>
+    <div class="tile t-head" data-tile>
+      <h2 id="modulos-title" class="headline headline-tile">12 módulos, <span class="it it-accent">un solo sistema</span></h2>
+      <p class="caption-text max-w-[40ch]">Cada área trabaja sobre los mismos datos: lo que vende Comercial ya está en Almacén y en Contabilidad.</p>
     </div>
 
-    <div class="tile t-web bg-paper text-ink" data-tile>
+    <div class="tile t-web tile-card" data-tile>
       <div class="ui ui-url" data-ui aria-hidden="true">
         <span class="url-lock"></span>erp.sigadvanced.com<span class="url-caret"></span>
       </div>
@@ -19,7 +23,7 @@
       </div>
     </div>
 
-    <div class="tile t-sunat bg-paper text-ink" data-tile>
+    <div class="tile t-sunat tile-card" data-tile>
       <div class="ui ui-sunat" data-ui aria-hidden="true">
         <span class="sunat-doc tabular">F001-00004812</span>
         <span class="sunat-chip">Aceptada por SUNAT</span>
@@ -31,7 +35,7 @@
       </div>
     </div>
 
-    <div class="tile t-kardex bg-electric text-paper" data-tile>
+    <div class="tile t-kardex tile-dark" data-tile>
       <div class="ui ui-kardex" data-ui aria-hidden="true">
         <span class="kx-label">Stock disponible</span>
         <span class="kx-num tabular">1,248</span>
@@ -43,7 +47,7 @@
       </div>
     </div>
 
-    <div class="tile t-bank bg-mist text-ink" data-tile>
+    <div class="tile t-bank tile-blue" data-tile>
       <div class="ui ui-bank" data-ui aria-hidden="true">
         <span class="bank-row"><span>Saldo banco</span><b class="tabular">84,310.25</b></span>
         <span class="bank-row"><span>Saldo libros</span><b class="tabular">84,310.25</b></span>
@@ -55,7 +59,7 @@
       </div>
     </div>
 
-    <div class="tile t-export bg-navy text-paper" data-tile>
+    <div class="tile t-export tile-dark" data-tile>
       <div class="ui ui-keys" data-ui aria-hidden="true">
         <span class="key">PDF</span><span class="key key-x">Excel</span>
       </div>
@@ -65,7 +69,7 @@
       </div>
     </div>
 
-    <div class="tile t-oc bg-paper text-ink" data-tile>
+    <div class="tile t-oc tile-card" data-tile>
       <div class="ui ui-toggle" data-ui aria-hidden="true">
         <span class="tg-label">Autorizar O/C 000731</span>
         <span class="tg"><span class="tg-knob"></span></span>
@@ -76,7 +80,7 @@
       </div>
     </div>
 
-    <div class="tile t-planilla bg-sky text-ink" data-tile>
+    <div class="tile t-planilla tile-peach" data-tile>
       <div class="ui ui-status" data-ui aria-hidden="true">
         <span class="st-period">Planilla octubre</span>
         <span class="st-chip">Calculada</span>
@@ -87,9 +91,9 @@
       </div>
     </div>
 
-    <div class="tile t-crm bg-electric text-paper" data-tile>
+    <div class="tile t-crm tile-card" data-tile>
       <div class="ui ui-avatars" data-ui aria-hidden="true">
-        <span class="av" style="--c:#f9a216">MR</span><span class="av" style="--c:#ffffff">LQ</span><span class="av" style="--c:#002f5f;color:#ffffff">JT</span>
+        <span class="av" style="--c:var(--c-accent);color:#fff">MR</span><span class="av" style="--c:var(--c-blue-soft)">LQ</span><span class="av" style="--c:var(--c-head);color:#ffffff">JT</span>
       </div>
       <div class="caption">
         <h3>CRM</h3>
@@ -97,7 +101,7 @@
       </div>
     </div>
 
-    <div class="tile t-conta bg-mist text-ink" data-tile>
+    <div class="tile t-conta tile-blue" data-tile>
       <div class="ui ui-ledger" data-ui aria-hidden="true">
         <span class="lg-row"><span>Debe</span><b class="tabular">12,540.00</b></span>
         <span class="lg-row"><span>Haber</span><b class="tabular">12,540.00</b></span>
@@ -108,7 +112,7 @@
       </div>
     </div>
 
-    <div class="tile t-prod bg-navy text-paper" data-tile>
+    <div class="tile t-prod tile-dark" data-tile>
       <div class="ui ui-progress" data-ui aria-hidden="true">
         <span class="pg-num tabular">76%</span>
         <span class="pg-track"><span class="pg-fill"></span></span>
@@ -119,7 +123,7 @@
       </div>
     </div>
 
-    <div class="tile t-rest bg-paper text-ink" data-tile>
+    <div class="tile t-rest tile-peach" data-tile>
       <div class="caption caption-top">
         <h3>Y además</h3>
         <p>Activos fijos, seguridad por perfiles, configuración y dashboard.</p>
@@ -133,13 +137,20 @@
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-auto-rows: 104px;
-    gap: 8px;
-    padding-inline: 10px;
+    gap: 10px;
+    padding-inline: var(--margin);
+    padding-bottom: var(--margin);
   }
+  .tile-card { background: var(--card); color: var(--c-ink); }
+  .tile-blue { background: var(--c-blue-soft); color: var(--c-ink); }
+  .tile-peach { background: var(--c-peach-soft); color: var(--c-ink); }
+  .tile-dark { background: var(--c-dark-2); color: #fff; }
+  .tone-dark .tile-dark { background: rgb(255 255 255 / 0.08); }
   .tile {
     position: relative;
     overflow: hidden;
-    padding: 20px;
+    padding: 22px;
+    border-radius: 18px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -157,17 +168,26 @@
   .t-prod   { grid-column: span 3; grid-row: span 2; }
   .t-rest   { grid-column: span 3; grid-row: span 2; justify-content: flex-start; }
 
-  .headline-tile {
-    font-size: clamp(2.25rem, 4vw, 3.75rem);
-    font-weight: 800;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    max-width: 14ch;
-  }
-  .caption-text { font-size: 1rem; }
+  .t-head { padding-left: 0; }
+  .headline-tile { font-size: clamp(2.25rem, 4vw, 3.75rem); max-width: 14ch; }
+  .caption-text { font-size: 1.0625rem; color: var(--fg-2); }
   .caption { position: relative; z-index: 1; }
-  .caption h3 { font-size: 1.125rem; font-weight: 700; }
-  .caption p { font-size: 0.9375rem; line-height: 1.4; max-width: 30ch; }
+  /* El nombre del módulo manda en cada mosaico: grande, en la serif cursiva, con una raya del acento. */
+  .caption h3 {
+    font-family: var(--font-italic);
+    font-style: italic;
+    font-weight: var(--italic-weight);
+    font-size: calc(clamp(1.75rem, 2.5vw, 2.5rem) * var(--italic-scale));
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+  .caption h3::before { content: ''; width: 1.1rem; height: 3px; background: var(--c-accent); flex: none; align-self: center; }
+  .tile-card .caption h3, .tile-blue .caption h3, .tile-peach .caption h3 { color: var(--c-head); }
+  .caption p { font-size: 0.9375rem; line-height: 1.4; max-width: 32ch; opacity: 0.85; }
 
   .ui {
     position: absolute;
@@ -184,8 +204,8 @@
     white-space: nowrap;
     letter-spacing: -0.03em;
   }
-  .url-lock { width: 0.45em; height: 0.55em; background: var(--color-navy); display: inline-block; }
-  .url-caret { width: 0.06em; height: 1em; background: var(--color-ink); display: inline-block; animation: blink 1s steps(1) infinite; }
+  .url-lock { width: 0.45em; height: 0.55em; background: var(--c-head); display: inline-block; }
+  .url-caret { width: 0.06em; height: 1em; background: var(--c-ink); display: inline-block; animation: blink 1s steps(1) infinite; }
 
   /* SUNAT */
   .ui-sunat {
@@ -195,7 +215,7 @@
   }
   .sunat-doc { font-size: 3.2em; letter-spacing: -0.03em; line-height: 1; white-space: nowrap; }
   .sunat-chip { font-size: 1.3em; background: #dcf3e5; color: #116a37; padding: 0.25em 0.6em; }
-  .sunat-total { color: var(--color-indigo); font-size: 4.6em; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; margin-top: 0.15em; }
+  .sunat-total { color: var(--c-blue); font-size: 4.6em; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; margin-top: 0.15em; }
 
   /* Kardex */
   .ui-kardex { top: 24px; left: 20px; display: flex; flex-direction: column; font-size: clamp(0.9rem, 1.2vw, 1.1rem); }
@@ -205,37 +225,37 @@
 
   /* Bancos */
   .ui-bank { top: 24px; left: 20px; right: -2.5em; font-size: clamp(1rem, 1.4vw, 1.25rem); display: flex; flex-direction: column; gap: 0.35em; }
-  .bank-row { display: flex; justify-content: space-between; gap: 1em; background: var(--color-paper); padding: 0.5em 0.7em; font-weight: 600; }
+  .bank-row { display: flex; justify-content: space-between; gap: 1em; background: #fff; padding: 0.5em 0.7em; font-weight: 600; border-radius: 8px; }
   .bank-row b { font-size: 1.3em; }
-  .bank-ok { align-self: flex-start; margin-top: 0.4em; background: var(--color-navy); color: var(--color-paper); padding: 0.3em 0.7em; font-size: 1.5em; }
+  .bank-ok { align-self: flex-start; margin-top: 0.4em; border-radius: 8px; background: var(--c-head); color: #fff; padding: 0.3em 0.7em; font-size: 1.5em; }
 
   /* Teclas */
   .ui-keys { top: 18px; right: -0.4em; display: flex; gap: 0.25em; font-size: clamp(1.75rem, 2.6vw, 2.5rem); }
-  .key { background: var(--color-paper); color: var(--color-navy); padding: 0.15em 0.45em; box-shadow: 0 0.12em 0 #b8c4dc; /* taste-skill-ignore: tecla dentro de data-ui */ }
+  .key { border-radius: 8px; background: #fff; color: var(--c-head); padding: 0.15em 0.45em; box-shadow: 0 0.12em 0 #b8c4dc; /* taste-skill-ignore: tecla dentro de data-ui */ }
   .key-x { color: #107c41; }
 
   /* Interruptor */
   .ui-toggle { top: 18px; left: 20px; right: -1em; display: flex; align-items: center; gap: 0.5em; font-size: clamp(1.4rem, 2.4vw, 2.25rem); white-space: nowrap; }
-  .tg { width: 2.2em; height: 1.2em; background: var(--color-electric); position: relative; flex: none; }
-  .tg-knob { position: absolute; top: 0.15em; right: 0.15em; width: 0.9em; height: 0.9em; background: var(--color-paper); }
+  .tg { width: 2.2em; height: 1.2em; border-radius: 1em; background: var(--c-blue); position: relative; flex: none; }
+  .tg-knob { position: absolute; top: 0.15em; right: 0.15em; width: 0.9em; height: 0.9em; border-radius: 50%; background: #fff; }
 
   /* Estado */
   .ui-status { top: 16px; left: 20px; right: -3em; display: flex; align-items: center; gap: 0.4em; font-size: clamp(1.1rem, 1.8vw, 1.6rem); white-space: nowrap; }
-  .st-chip { background: var(--color-ink); color: var(--color-paper); padding: 0.2em 0.55em; }
+  .st-chip { border-radius: 0.4em; background: var(--c-head); color: #fff; padding: 0.2em 0.55em; }
 
   /* Avatares */
   .ui-avatars { top: 14px; right: -0.6em; display: flex; font-size: clamp(1.4rem, 2.2vw, 2rem); }
-  .av { width: 2em; height: 2em; border-radius: 50%; background: var(--c); color: var(--color-ink); display: grid; place-items: center; margin-left: -0.45em; outline: 0.12em solid var(--color-electric); }
+  .av { width: 2em; height: 2em; border-radius: 50%; background: var(--c); color: var(--c-ink); display: grid; place-items: center; margin-left: -0.45em; outline: 0.12em solid #fff; }
 
   /* Libro */
   .ui-ledger { top: 14px; left: 20px; right: -2em; display: flex; flex-direction: column; gap: 0.2em; font-size: clamp(1rem, 1.5vw, 1.35rem); }
-  .lg-row { display: flex; justify-content: space-between; gap: 1em; background: var(--color-paper); padding: 0.25em 0.6em; font-weight: 600; }
+  .lg-row { display: flex; justify-content: space-between; gap: 1em; border-radius: 6px; background: #fff; padding: 0.25em 0.6em; font-weight: 600; }
 
   /* Progreso */
   .ui-progress { top: 14px; left: 20px; right: -2em; font-size: clamp(1rem, 1.5vw, 1.35rem); display: flex; align-items: center; gap: 0.5em; }
   .pg-num { font-size: 2.2em; letter-spacing: -0.03em; }
-  .pg-track { flex: 1; height: 0.7em; background: var(--color-navy-deep); }
-  .pg-fill { display: block; height: 100%; width: 76%; background: var(--color-orange); }
+  .pg-track { flex: 1; height: 0.7em; border-radius: 1em; overflow: hidden; background: rgb(255 255 255 / 0.18); }
+  .pg-fill { display: block; height: 100%; width: 76%; background: var(--c-accent); }
 
   @keyframes blink { 50% { opacity: 0; } }
 
@@ -248,6 +268,8 @@
     .t-kardex, .t-bank { grid-column: span 1; grid-row: span 3; }
     .t-export, .t-planilla, .t-crm, .t-conta, .t-prod, .t-rest { grid-column: span 1; grid-row: span 2; }
     .headline-tile { font-size: 9vw; }
+    .caption h3 { font-size: calc(1.45rem * var(--italic-scale)); overflow-wrap: anywhere; }
+    .t-head { padding-right: 0; }
   }
   @media (min-width: 640px) and (max-width: 1023px) {
     .board { grid-auto-rows: 120px; }

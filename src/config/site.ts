@@ -2,7 +2,7 @@
 
 export const empresa = {
   producto: 'SIG Advanced',
-  nombre: 'Lite Software & Consulting',
+  nombre: 'Lite Software & Consulting SAC',
   // POR CONFIRMAR: teléfono, correo y dirección vienen del sitio anterior (sigerp.pe).
   whatsapp: '51933647183',
   whatsappVisible: '+51 933 647 183',
@@ -111,9 +111,18 @@ export const modulos: Modulo[] = [
 export const totalOpciones = modulos.reduce((s, m) => s + m.opciones, 0);
 
 // Clientes publicados en sigerp.pe. POR CONFIRMAR: permiso para seguir mostrándolos.
+// Logos descargados de sigerp.pe (01/11/2026) a public/img/clientes.
 export const clientes = [
-  'Seprocal', 'IESA', 'Transvida', 'Point Andina', 'Mundo sin Cáncer',
-  'Cobertura', 'Rauletti', "D'Cocina", 'Probela', 'Liguria',
+  { nombre: 'Seprocal', logo: '/img/clientes/seprocal.png' },
+  { nombre: 'IESA', logo: '/img/clientes/iesa.png' },
+  { nombre: 'Transvida', logo: '/img/clientes/transvida.jpg' },
+  { nombre: 'Point Andina', logo: '/img/clientes/point-andina.png' },
+  { nombre: 'Mundo sin Cáncer', logo: '/img/clientes/mundo-sin-cancer.jpg' },
+  { nombre: 'Cobertura', logo: '/img/clientes/cobertura.jpg' },
+  { nombre: 'Rauletti', logo: '/img/clientes/rauletti.jpg' },
+  { nombre: "D'Cocina", logo: '/img/clientes/dcocina.jpg' },
+  { nombre: 'Probela', logo: '/img/clientes/probela.png' },
+  { nombre: 'Liguria', logo: '/img/clientes/liguria.jpg' },
 ];
 
 export const ejemplosNecesidad = [

@@ -1,43 +1,50 @@
 ---
 import { empresa, mensajes, wa } from '../config/site';
+import { tono, type Tono } from '../config/modelos';
+
+interface Props { tone: Tono }
+const { tone } = Astro.props;
 
 const anio = new Date().getFullYear();
+const portada = Astro.url.pathname === '/' || Astro.url.pathname === '/index.html';
+const ir = (ancla: string) => (portada ? ancla : `/${ancla}`);
 const enlaces = [
-  { href: '#inicio', texto: 'Inicio' },
-  { href: '#modulos', texto: 'Módulos' },
-  { href: '#clientes', texto: 'Clientes' },
-  { href: '#plan', texto: 'Plan' },
-  { href: '#nosotros', texto: 'Nosotros' },
-  { href: '#cotizar', texto: 'Cotizar' },
+  { href: ir('#inicio'), texto: 'Inicio' },
+  { href: ir('#modulos'), texto: 'Módulos' },
+  { href: ir('#sunat'), texto: 'Notificaciones SUNAT' },
+  { href: ir('#ia'), texto: 'Consultas con IA' },
+  { href: '/desarrollos', texto: 'Integraciones y desarrollos' },
+  { href: ir('#nosotros'), texto: 'Nosotros' },
+  { href: wa(mensajes.plan), texto: 'Cotiza por WhatsApp', externo: true },
 ];
 ---
 
-<footer class="foot bg-navy text-paper" data-ink="#ffffff">
+<footer class:list={['foot chapter', tono(tone)]} data-ink>
   <div class="foot-grid">
-    <div class="ft ft-statement bg-navy-deep">
-      <p class="text-[1.5rem] leading-tight font-semibold max-w-[24ch]">{empresa.producto}, el ERP web de {empresa.nombre}.</p>
+    <div class="ft ft-statement">
+      <p class="text-[1.5rem] leading-tight font-semibold max-w-[24ch]">{empresa.producto}, el ERP web de {empresa.nombre}. <span class="it it-accent">Desde 2008.</span></p>
       <p class="small opacity-80">© {anio} {empresa.nombre}. Todos los derechos reservados.</p>
     </div>
-    <nav class="ft ft-nav bg-navy-deep" aria-label="Pie de página">
+    <nav class="ft ft-nav" aria-label="Pie de página">
       <ul class="flex flex-col gap-1.5">
-        {enlaces.map((e) => <li><a class="link-underline" href={e.href}>{e.texto}</a></li>)}
+        {enlaces.map((e) => <li><a class="link-underline" href={e.href} target={e.externo ? '_blank' : undefined} rel={e.externo ? 'noopener' : undefined}>{e.texto}</a></li>)}
       </ul>
     </nav>
-    <div class="ft ft-time bg-navy-deep">
+    <div class="ft ft-time">
       <p class="font-semibold">{empresa.ciudad}, Perú</p>
       <p class="title tabular" id="lima-time" aria-live="off">--:--</p>
       <p class="small opacity-80">{empresa.direccion}</p>
     </div>
-    <div class="ft ft-contact bg-navy-deep">
+    <div class="ft ft-contact">
       <p class="small opacity-80">WhatsApp y teléfono</p>
       <a class="text-[1.25rem] font-semibold link-underline" href={wa(mensajes.general)} target="_blank" rel="noopener">{empresa.whatsappVisible}</a>
       <a class="link-underline" href={`tel:${empresa.telefono.replace(/[^+\d]/g, '')}`}>{empresa.telefono}</a>
       {empresa.correo && <a class="link-underline" href={`mailto:${empresa.correo}`}>{empresa.correo}</a>}
     </div>
-    <div class="ft ft-word bg-ink">
-      <p class="wordmark" aria-hidden="true">SIG Advanced</p>
+    <div class="ft ft-word">
+      <p class="wordmark" aria-hidden="true">SIG <span class="it">Advanced</span></p>
     </div>
-    <a class="ft ft-go bg-orange text-ink" href={wa(mensajes.general)} target="_blank" rel="noopener">
+    <a class="ft ft-go" href={wa(mensajes.general)} target="_blank" rel="noopener">
       <span class="text-[1.75rem] font-bold leading-tight max-w-[12ch]">Escríbenos por WhatsApp</span>
       <svg class="go-arrow" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 56 56 8M20 8h36v36" fill="none" stroke="currentColor" stroke-width="4"/></svg>
     </a>
@@ -49,7 +56,9 @@ const enlaces = [
 </a>
 
 <style>
-  .foot { padding: 10px; }
+  .foot { padding: var(--margin); min-height: 0; }
+  .ft { background: var(--chip); border-radius: 18px; }
+  .ft-title { color: var(--head); }
   .foot-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 8px; }
   .ft { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; min-height: 220px; }
   .ft-statement { grid-column: span 4; }
@@ -57,18 +66,18 @@ const enlaces = [
   .ft-time { grid-column: span 2; }
   .ft-contact { grid-column: span 3; justify-content: flex-end; gap: 0.35rem; }
   .ft-word { grid-column: span 8; min-height: 320px; display: grid; place-items: center; overflow: hidden; }
-  .ft-go { grid-column: span 4; min-height: 320px; transition: background-color 200ms ease; }
-  .ft-go:hover { background: #ffb23a; }
+  .ft-go { grid-column: span 4; min-height: 320px; background: var(--c-accent); color: var(--c-accent-ink); transition: background-color 200ms ease; }
+  .ft-go:hover { background: var(--c-accent-hover); }
   .go-arrow { align-self: flex-end; transition: transform 300ms var(--ease-out-quint); }
   .ft-go:hover .go-arrow { transform: translate(6px, -6px); }
   .wordmark {
-    font-size: 7.2vw;
+    font-size: 6vw;
     font-weight: 860;
     font-stretch: 88%;
     letter-spacing: -0.04em;
     line-height: 1;
     white-space: nowrap;
-    color: var(--color-paper);
+    color: var(--head);
   }
 
   .wa-float {
