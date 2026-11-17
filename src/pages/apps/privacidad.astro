@@ -1,0 +1,90 @@
+---
+// Política de privacidad de las apps móviles de Lite Software & Consulting (Google Play la pide en la ficha).
+// Rinde Gastos es la primera; si se suma otra app, se agrega su sección en «Qué datos usamos».
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { empresa, wa } from '../../config/site';
+
+const correo = 'jrodriguez@sigerp.pe';
+const actualizado = '17 de noviembre de 2026';
+---
+
+<Base
+  title={`Política de privacidad de las apps | ${empresa.nombre}`}
+  description="Cómo las apps móviles de SIG Advanced tratan los datos de sus usuarios."
+>
+  <Header />
+  <main class="legal">
+    <article>
+      <h1>Política de privacidad de las apps móviles</h1>
+      <p class="fecha">Última actualización: {actualizado}</p>
+
+      <p>
+        Esta política explica qué datos usan las aplicaciones móviles de <strong>{empresa.nombre}</strong>
+        (RUC 20606225912, {empresa.direccion}), entre ellas <strong>SIG Rinde Gastos</strong>, y para qué.
+      </p>
+
+      <h2>Quién usa la app</h2>
+      <p>
+        SIG Rinde Gastos es una herramienta para empresas que usan el ERP SIG Advanced. No tiene registro abierto: la
+        cuenta de cada usuario la crea su empresa. La empresa es la responsable de los datos de sus colaboradores y
+        nosotros los tratamos por encargo de ella, sólo para prestar el servicio.
+      </p>
+
+      <h2>Qué datos usamos</h2>
+      <ul>
+        <li><strong>Datos de acceso:</strong> el RUC de la empresa, el correo y la contraseña del usuario. Para no pedirla en cada ingreso, el teléfono guarda un código de sesión y, para el ingreso con huella, la contraseña cifrada en el almacén seguro del propio teléfono. Se borran al cerrar sesión.</li>
+        <li><strong>Datos del usuario:</strong> nombre, correo y el rol que le dio su empresa (colaborador, aprobador o administrador).</li>
+        <li><strong>Gastos y rendiciones:</strong> fecha, proveedor, RUC, tipo y número de comprobante, importes, moneda, categoría y comentarios que registra el usuario.</li>
+        <li><strong>Fotos de los comprobantes:</strong> la app usa la cámara o la galería sólo cuando el usuario elige adjuntar un comprobante, y sube únicamente la foto elegida.</li>
+        <li><strong>Huella digital:</strong> si el usuario la activa, el teléfono la valida por su cuenta; la app no recibe ni guarda la huella.</li>
+      </ul>
+      <p>La app no usa la ubicación, los contactos ni el micrófono, no muestra publicidad y no rastrea al usuario.</p>
+
+      <h2>Para qué los usamos</h2>
+      <p>
+        Sólo para registrar, aprobar y contabilizar los gastos en el SIG Advanced de la empresa del usuario. No vendemos
+        ni compartimos los datos con terceros para fines comerciales.
+      </p>
+
+      <h2>Dónde se guardan y cómo se protegen</h2>
+      <p>
+        Los datos viajan cifrados (HTTPS) y se guardan en los servidores de SIG Advanced, en la base de datos de la
+        empresa del usuario. Sólo acceden las personas que la empresa autorizó y nuestro equipo de soporte cuando la
+        empresa lo pide.
+      </p>
+
+      <h2>Cuánto tiempo</h2>
+      <p>
+        Los gastos y sus comprobantes se conservan mientras la empresa los necesite para su contabilidad y por los plazos
+        que exige la ley tributaria peruana. Cuando la empresa deja el servicio o pide borrarlos, se eliminan.
+      </p>
+
+      <h2>Tus derechos</h2>
+      <p>
+        Puedes pedir acceder, corregir o eliminar tus datos (Ley N.º 29733 de Protección de Datos Personales). Para borrar
+        tu cuenta sigue los pasos de <a href="/apps/eliminar-cuenta">Eliminar mi cuenta</a>.
+      </p>
+
+      <h2>Contacto</h2>
+      <p>
+        Correo: <a href={`mailto:${correo}`}>{correo}</a> · WhatsApp:
+        <a href={wa('Hola, tengo una consulta sobre la privacidad de la app SIG Rinde Gastos.')} target="_blank" rel="noopener">{empresa.whatsappVisible}</a>
+      </p>
+      <p>Si cambiamos esta política, publicaremos la nueva versión en esta misma página.</p>
+    </article>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .legal { background: var(--c-light); color: var(--c-ink); padding: 7.5rem 1rem 4rem; }
+  .legal article { max-width: 46rem; margin: 0 auto; line-height: 1.65; font-size: 1.0625rem; }
+  .legal h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.15; color: var(--c-head); margin: 0 0 .4rem; }
+  .legal h2 { font-size: 1.3rem; color: var(--c-head); margin: 2.2rem 0 .6rem; }
+  .legal .fecha { color: var(--c-ink-2); margin: 0 0 1.5rem; font-size: .95rem; }
+  .legal p, .legal li { margin: 0 0 .8rem; }
+  .legal ul { padding-left: 1.2rem; list-style: disc; }
+  .legal a { color: var(--c-blue); text-decoration: underline; }
+</style>

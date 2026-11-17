@@ -1,0 +1,63 @@
+---
+// Página para pedir el borrado de la cuenta de las apps móviles (Google Play la exige en la ficha).
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { empresa, wa } from '../../config/site';
+
+const correo = 'jrodriguez@sigerp.pe';
+const asunto = encodeURIComponent('Eliminar mi cuenta de SIG Rinde Gastos');
+const cuerpo = encodeURIComponent('Pido eliminar mi cuenta de SIG Rinde Gastos.\n\nRUC de mi empresa:\nCorreo con el que ingreso a la app:\n');
+---
+
+<Base
+  title={`Eliminar mi cuenta de SIG Rinde Gastos | ${empresa.nombre}`}
+  description="Cómo pedir que se elimine tu cuenta de la app SIG Rinde Gastos y sus datos."
+>
+  <Header />
+  <main class="legal">
+    <article>
+      <h1>Eliminar mi cuenta de SIG Rinde Gastos</h1>
+      <p>App de <strong>{empresa.nombre}</strong>.</p>
+
+      <h2>Cómo pedirlo</h2>
+      <ol>
+        <li>
+          Escríbenos desde el correo con el que ingresas a la app a
+          <a href={`mailto:${correo}?subject=${asunto}&body=${cuerpo}`}>{correo}</a>, o por WhatsApp al
+          <a href={wa('Hola, quiero eliminar mi cuenta de SIG Rinde Gastos.')} target="_blank" rel="noopener">{empresa.whatsappVisible}</a>.
+        </li>
+        <li>Indica el <strong>RUC de tu empresa</strong> y el <strong>correo</strong> con el que ingresas.</li>
+        <li>Confirmamos que la cuenta es tuya y te avisamos cuando quede eliminada, en un plazo máximo de 15 días hábiles.</li>
+      </ol>
+      <p>También puedes pedírselo al administrador de SIG Rinde Gastos de tu empresa: él puede dar de baja tu usuario.</p>
+
+      <h2>Qué se elimina</h2>
+      <ul>
+        <li>Tu usuario, tu nombre, tu correo y tu acceso a la app.</li>
+        <li>Los gastos que dejaste en borrador y que nunca enviaste a aprobar, con sus fotos.</li>
+      </ul>
+
+      <h2>Qué se conserva y por cuánto tiempo</h2>
+      <p>
+        Los gastos que ya enviaste y que tu empresa aprobó o registró en su contabilidad, con la foto de su comprobante,
+        se conservan porque son documentos contables de la empresa. Se guardan por el plazo que exige la ley tributaria
+        peruana (hasta 10 años) y luego se eliminan. En ellos queda sólo tu nombre como autor del gasto.
+      </p>
+
+      <p>Más detalles en la <a href="/apps/privacidad">política de privacidad</a>.</p>
+    </article>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .legal { background: var(--c-light); color: var(--c-ink); padding: 7.5rem 1rem 4rem; }
+  .legal article { max-width: 46rem; margin: 0 auto; line-height: 1.65; font-size: 1.0625rem; }
+  .legal h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.15; color: var(--c-head); margin: 0 0 .6rem; }
+  .legal h2 { font-size: 1.3rem; color: var(--c-head); margin: 2.2rem 0 .6rem; }
+  .legal p, .legal li { margin: 0 0 .8rem; }
+  .legal ol { padding-left: 1.3rem; list-style: decimal; }
+  .legal ul { padding-left: 1.2rem; list-style: disc; }
+  .legal a { color: var(--c-blue); text-decoration: underline; }
+</style>
