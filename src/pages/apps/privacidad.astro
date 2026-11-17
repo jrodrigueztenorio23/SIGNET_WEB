@@ -22,29 +22,47 @@ const actualizado = '17 de noviembre de 2026';
 
       <p>
         Esta política explica qué datos usan las aplicaciones móviles de <strong>{empresa.nombre}</strong>
-        (RUC 20606225912, {empresa.direccion}), entre ellas <strong>SIG Rinde Gastos</strong>, y para qué.
+        (RUC 20606225912, {empresa.direccion}) y para qué: <strong>SIG Rinde Gastos</strong>,
+        <strong>SIG Vendedores</strong> y <strong>SIG Planilla</strong>.
       </p>
 
-      <h2>Quién usa la app</h2>
+      <h2>Quién usa las apps</h2>
       <p>
-        SIG Rinde Gastos es una herramienta para empresas que usan el ERP SIG Advanced. No tiene registro abierto: la
-        cuenta de cada usuario la crea su empresa. La empresa es la responsable de los datos de sus colaboradores y
-        nosotros los tratamos por encargo de ella, sólo para prestar el servicio.
+        Son herramientas para empresas que usan el ERP SIG Advanced. No tienen registro abierto: la cuenta de cada
+        usuario la crea su empresa. La empresa es la responsable de los datos de sus colaboradores y nosotros los
+        tratamos por encargo de ella, sólo para prestar el servicio.
       </p>
 
-      <h2>Qué datos usamos</h2>
+      <h2>Datos comunes a las tres apps</h2>
       <ul>
-        <li><strong>Datos de acceso:</strong> el RUC de la empresa, el correo y la contraseña del usuario. Para no pedirla en cada ingreso, el teléfono guarda un código de sesión y, para el ingreso con huella, la contraseña cifrada en el almacén seguro del propio teléfono. Se borran al cerrar sesión.</li>
-        <li><strong>Datos del usuario:</strong> nombre, correo y el rol que le dio su empresa (colaborador, aprobador o administrador).</li>
-        <li><strong>Gastos y rendiciones:</strong> fecha, proveedor, RUC, tipo y número de comprobante, importes, moneda, categoría y comentarios que registra el usuario.</li>
-        <li><strong>Fotos de los comprobantes:</strong> la app usa la cámara o la galería sólo cuando el usuario elige adjuntar un comprobante, y sube únicamente la foto elegida.</li>
+        <li><strong>Datos de acceso:</strong> el RUC de la empresa y el usuario, correo o documento con su contraseña o PIN. Para no pedirlos en cada ingreso, el teléfono guarda un código de sesión y, para el ingreso con huella, la clave cifrada en el almacén seguro del propio teléfono. Se borran al cerrar sesión.</li>
+        <li><strong>Datos del usuario:</strong> nombre, correo o documento y el rol que le dio su empresa.</li>
         <li><strong>Huella digital:</strong> si el usuario la activa, el teléfono la valida por su cuenta; la app no recibe ni guarda la huella.</li>
       </ul>
-      <p>La app no usa la ubicación, los contactos ni el micrófono, no muestra publicidad y no rastrea al usuario.</p>
+
+      <h2>SIG Rinde Gastos</h2>
+      <ul>
+        <li><strong>Gastos y rendiciones:</strong> fecha, proveedor, RUC, tipo y número de comprobante, importes, moneda, categoría y comentarios que registra el usuario.</li>
+        <li><strong>Fotos de los comprobantes:</strong> la app usa la cámara o la galería sólo cuando el usuario elige adjuntar un comprobante, y sube únicamente la foto elegida.</li>
+      </ul>
+
+      <h2>SIG Vendedores</h2>
+      <ul>
+        <li><strong>Ventas:</strong> clientes, productos, precios, pedidos, cotizaciones y cuentas por cobrar de la empresa que el vendedor consulta o registra.</li>
+        <li><strong>Micrófono:</strong> sólo si el vendedor toca el botón de dictado para buscar un cliente o producto con la voz. El audio lo convierte en texto el servicio de voz del teléfono; la app recibe únicamente el texto y no guarda grabaciones.</li>
+      </ul>
+
+      <h2>SIG Planilla</h2>
+      <ul>
+        <li><strong>Datos laborales:</strong> documento, nombre, boletas de pago, vacaciones, permisos y marcaciones de asistencia del trabajador, tal como están en la planilla de su empresa.</li>
+        <li><strong>Cámara:</strong> sólo para leer el código QR al marcar asistencia en el kiosco de la empresa; no se toman ni se guardan fotos.</li>
+        <li><strong>Notificaciones:</strong> para avisar, por ejemplo, que una solicitud fue aprobada. Se usa Firebase Cloud Messaging de Google, que recibe un identificador del teléfono sólo para entregar el aviso.</li>
+      </ul>
+      <p>Ninguna de las apps usa la ubicación ni los contactos, muestra publicidad o rastrea al usuario.</p>
 
       <h2>Para qué los usamos</h2>
       <p>
-        Sólo para registrar, aprobar y contabilizar los gastos en el SIG Advanced de la empresa del usuario. No vendemos
+        Sólo para prestar el servicio de cada app dentro del SIG Advanced de la empresa del usuario. No vendemos
         ni compartimos los datos con terceros para fines comerciales.
       </p>
 
